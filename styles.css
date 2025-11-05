@@ -532,8 +532,8 @@ footer {
 @media (max-width: 768px) {
     nav {
         flex-direction: column;
-        gap: 0.8rem;
-        padding: 1rem;
+        gap: 0.5rem;
+        padding: 0.8rem 1rem;
     }
 
     .logo {
@@ -579,8 +579,8 @@ footer {
     }
 
     .hero {
-        margin-top: 150px;
-        padding: 80px 2rem 80px;
+        margin-top: 180px;
+        padding: 60px 2rem 80px;
     }
 
     .hero h1 {
@@ -612,6 +612,11 @@ footer {
 
     .nav-links a {
         padding: 0.5rem 0.2rem;
+    }
+
+    .hero {
+        margin-top: 170px;
+        padding: 50px 1.5rem 70px;
     }
 
     .hero h1 {
