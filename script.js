@@ -1,6 +1,7 @@
 // ========================================
 // CONFIGURACIÓN - ¡IMPORTANTE!
 // ========================================
+// He mantenido tu URL actual
 const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxwm052DUZV8KR-vAUsD6ppwDFuj_h5Tr8f17DpCApi_isKwRMnbYbhuyDbHSW2feL/exec';
 
 const CREDENCIALES = {
@@ -212,10 +213,11 @@ formRegistro.addEventListener('submit', async (e) => {
                 celular: datos.celular
             });
         } else {
-            mostrarMensaje(mensajeRegistro, '❌ Error: ' + response.error, 'error');
+            mostrarMensaje(mensajeRegistro, '❌ Error: ' + (response.error || 'Desconocido'), 'error');
         }
     } catch (error) {
         mostrarMensaje(mensajeRegistro, '❌ Error de conexión', 'error');
+        console.error(error);
     }
     
     btnText.style.display = 'inline';
@@ -598,10 +600,10 @@ async function cargarClientesHabituales() {
 }
 
 // ========================================
-// COMUNICACIÓN CON GOOGLE SHEETS
+// COMUNICACIÓN CON GOOGLE SHEETS (¡CORREGIDA!)
 // ========================================
 async function enviarAGoogleSheets(datos) {
-    if (GOOGLE_SCRIPT_URL === 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI') {
+    if (GOOGLE_SCRIPT_URL.includes('TU_URL')) {
         console.warn('⚠️ Modo Demo - Configura Google Apps Script');
         return modoDemo(datos);
     }
@@ -609,13 +611,16 @@ async function enviarAGoogleSheets(datos) {
     try {
         const response = await fetch(GOOGLE_SCRIPT_URL, {
             method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(datos)
         });
-        return { success: true };
+        
+        // Ahora sí esperamos la respuesta real
+        const resultado = await response.json();
+        return resultado;
+        
     } catch (e) {
-        throw e;
+        console.error("Error en conexión:", e);
+        return { success: false, error: e.toString() };
     }
 }
 
