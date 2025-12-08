@@ -19,6 +19,7 @@
                 <li><a href="#catalogo">Catálogo</a></li>
                 <li><a href="#precios">Precios</a></li>
                 <li><a href="#redes">Contacto</a></li>
+                <li><a href="#" id="btn-clientes" class="nav-clientes">👥 Clientes</a></li>
             </ul>
         </nav>
     </header>
@@ -184,20 +185,251 @@
 
         <h2 style="margin-top: 4rem;" id="redes">Síguenos en Redes</h2>
         <div class="redes-sociales">
-            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank" title="Visita nuestra página de Facebook">
+            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank">
                 <img src="facebook-logo.png" alt="Facebook">
             </a>
-            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank" title="Síguenos en Instagram">
+            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank">
                 <img src="instagram-logo.png" alt="Instagram">
             </a>
-            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank" title="Chatea con nosotros por WhatsApp">
+            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank">
                 <img src="whatsapp-logo.png" alt="WhatsApp">
             </a>
-            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank" title="Síguenos en TikTok">
+            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank">
                 <img src="tiktok-logo.png" alt="TikTok">
             </a>
         </div>
     </section>
+
+    <!-- Modal de Login -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content modal-login-content">
+            <span class="close-modal">&times;</span>
+            <div class="login-header">
+                <div class="login-icon">🔐</div>
+                <h2>Acceso Personal</h2>
+                <p>Solo para empleados de Disfraces Fantasía</p>
+            </div>
+            <form id="form-login">
+                <div class="form-group">
+                    <label for="login-email">📧 Correo Electrónico</label>
+                    <input type="email" id="login-email" placeholder="correo@disfracesfantasia.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">🔑 Contraseña</label>
+                    <input type="password" id="login-password" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-login">Ingresar</button>
+                <p id="login-error" class="login-error"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Gestión de Clientes -->
+    <div id="modal-clientes" class="modal">
+        <div class="modal-content modal-clientes-content">
+            <div class="modal-header-clientes">
+                <h2>👥 Gestión de Clientes</h2>
+                <div class="header-actions">
+                    <span id="usuario-logueado"></span>
+                    <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+                    <span class="close-modal">&times;</span>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="registro">📝 Nuevo</button>
+                <button class="tab-btn" data-tab="buscar">🔍 Buscar</button>
+                <button class="tab-btn" data-tab="historial">📋 Historial</button>
+                <button class="tab-btn" data-tab="clientes-habituales">⭐ Habituales</button>
+            </div>
+
+            <!-- Tab: Nuevo Registro -->
+            <div id="tab-registro" class="tab-content active">
+                <form id="form-registro">
+                    <!-- Indicador de cliente habitual -->
+                    <div id="cliente-habitual-alert" class="cliente-habitual-alert" style="display: none;">
+                        <span class="alert-icon">⭐</span>
+                        <span class="alert-text">¡Cliente habitual detectado! Datos cargados.</span>
+                        <span class="alert-alquileres"></span>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cedula">🪪 Cédula de Identidad</label>
+                            <div class="input-with-loader">
+                                <input type="text" id="cedula" placeholder="Ej: 12345678 LP" required>
+                                <span id="cedula-loader" class="input-loader" style="display: none;">🔄</span>
+                            </div>
+                            <small class="input-hint">Ingresa CI para autocompletar si es cliente habitual</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre-cliente">👤 Nombre Completo</label>
+                            <input type="text" id="nombre-cliente" placeholder="Ej: Juan Pérez García" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="celular">📱 Celular</label>
+                            <input type="tel" id="celular" placeholder="Ej: 76133121" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="disfraz">🎭 Disfraz que Lleva</label>
+                            <input type="text" id="disfraz" placeholder="Ej: Spider-Man adulto talla M" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="precio-alquiler">💲 Precio Alquiler (Bs.)</label>
+                            <input type="number" id="precio-alquiler" placeholder="Ej: 50" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="condiciones">📋 Condiciones del Disfraz</label>
+                            <select id="condiciones" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Excelente">✨ Excelente - Como nuevo</option>
+                                <option value="Bueno">👍 Bueno - Pequeños detalles</option>
+                                <option value="Regular">⚠️ Regular - Desgaste visible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha-alquiler">📅 Fecha Alquiler</label>
+                            <input type="date" id="fecha-alquiler" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-devolucion">📅 Fecha Devolución</label>
+                            <input type="date" id="fecha-devolucion" required>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Garantía -->
+                    <div class="garantia-section">
+                        <h3 class="section-title">🛡️ Garantía del Alquiler</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="garantia-dinero">💵 Garantía en Dinero (Bs.)</label>
+                                <input type="number" id="garantia-dinero" placeholder="Ej: 100" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="garantia-objeto">📦 Garantía en Objeto</label>
+                                <input type="text" id="garantia-objeto" placeholder="Ej: Celular, CI original, etc.">
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="descripcion-garantia">📝 Descripción del Objeto en Garantía</label>
+                            <textarea id="descripcion-garantia" rows="2" placeholder="Marca, modelo, color, estado del objeto..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="observaciones">📝 Observaciones Generales</label>
+                        <textarea id="observaciones" rows="2" placeholder="Accesorios incluidos, acuerdos especiales..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-registrar">
+                            <span class="btn-text">✅ Registrar Alquiler</span>
+                            <span class="btn-loading" style="display: none;">⏳ Guardando...</span>
+                        </button>
+                        <button type="button" id="btn-imprimir-recibo" class="btn-imprimir" style="display: none;">
+                            🖨️ Imprimir Recibo
+                        </button>
+                        <button type="reset" class="btn-limpiar">🗑️ Limpiar</button>
+                    </div>
+                </form>
+                <div id="mensaje-registro" class="mensaje-resultado"></div>
+            </div>
+
+            <!-- Tab: Buscar Cliente -->
+            <div id="tab-buscar" class="tab-content">
+                <div class="busqueda-container">
+                    <div class="form-group busqueda-grupo">
+                        <label for="buscar-input">🔍 Buscar por Nombre o Cédula</label>
+                        <div class="busqueda-input-wrapper">
+                            <input type="text" id="buscar-input" placeholder="Escribe nombre o cédula...">
+                            <button id="btn-buscar" class="btn-buscar">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultados-busqueda" class="resultados-container">
+                    <p class="placeholder-text">Ingresa un nombre o cédula para buscar</p>
+                </div>
+
+                <!-- Modal devolución -->
+                <div id="modal-devolucion" class="modal-inline" style="display: none;">
+                    <div class="devolucion-content">
+                        <h3>📦 Registrar Devolución</h3>
+                        <p id="info-devolucion"></p>
+                        <div class="form-group">
+                            <label for="condiciones-devolucion">Estado del disfraz:</label>
+                            <select id="condiciones-devolucion" required>
+                                <option value="Excelente">✨ Excelente - Sin daños</option>
+                                <option value="Bueno">👍 Bueno - Uso normal</option>
+                                <option value="Dañado">⚠️ Dañado - Requiere reparación</option>
+                                <option value="Muy Dañado">❌ Muy Dañado</option>
+                            </select>
+                        </div>
+                        <div class="garantia-devolucion-info" id="garantia-devolucion-info">
+                            <h4>🛡️ Garantía a devolver:</h4>
+                            <p id="garantia-devolver-texto"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="notas-devolucion">Notas:</label>
+                            <textarea id="notas-devolucion" rows="2" placeholder="Observaciones..."></textarea>
+                        </div>
+                        <div class="devolucion-actions">
+                            <button id="btn-confirmar-devolucion" class="btn-confirmar">✅ Confirmar</button>
+                            <button id="btn-cancelar-devolucion" class="btn-cancelar">❌ Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Historial -->
+            <div id="tab-historial" class="tab-content">
+                <div class="historial-controles">
+                    <button id="btn-cargar-historial" class="btn-cargar">📥 Cargar Registros</button>
+                    <select id="filtro-estado">
+                        <option value="todos">Todos</option>
+                        <option value="Alquilado">🔴 Alquilados</option>
+                        <option value="Devuelto">🟢 Devueltos</option>
+                    </select>
+                </div>
+                <div id="tabla-historial" class="tabla-container">
+                    <p class="placeholder-text">Haz clic en "Cargar Registros"</p>
+                </div>
+            </div>
+
+            <!-- Tab: Clientes Habituales -->
+            <div id="tab-clientes-habituales" class="tab-content">
+                <div class="clientes-habituales-header">
+                    <h3>⭐ Clientes Habituales</h3>
+                    <p>Sus datos se cargan automáticamente al ingresar su CI en nuevo registro.</p>
+                </div>
+                <div class="historial-controles">
+                    <button id="btn-cargar-clientes" class="btn-cargar">📥 Cargar Clientes</button>
+                </div>
+                <div id="tabla-clientes-habituales" class="tabla-container">
+                    <p class="placeholder-text">Haz clic en "Cargar Clientes"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Recibo para Imprimir -->
+    <div id="modal-recibo" class="modal">
+        <div class="modal-content modal-recibo-content">
+            <div class="recibo-no-print">
+                <button id="btn-cerrar-recibo" class="btn-cerrar-recibo">✕ Cerrar</button>
+                <button id="btn-print-recibo" class="btn-print-recibo">🖨️ Imprimir</button>
+            </div>
+            <div id="recibo-contenido" class="recibo-contenido">
+                <!-- Contenido del recibo generado dinámicamente -->
+            </div>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer>
