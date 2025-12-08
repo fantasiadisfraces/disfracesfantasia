@@ -1,7 +1,7 @@
 // ========================================
 // CONFIGURACIÓN - ¡IMPORTANTE!
 // ========================================
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwkdkuWA8tCfpoROwAW2xvQ3Xz8TgMH90Y0Bz2EqxfUeaQA-huXIDaJQXsmopbPceI/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxxwm052DUZV8KR-vAUsD6ppwDFuj_h5Tr8f17DpCApi_isKwRMnbYbhuyDbHSW2feL/exec';
 
 const CREDENCIALES = {
     email: 'admin@disfracesfantasia.com',
