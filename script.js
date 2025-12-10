@@ -306,25 +306,79 @@ document.getElementById('cedula').addEventListener('input', function() {
 
 async function buscarClienteHabitual(cedula) {
     try {
-        const response = await gapi.client.sheets.spreadsheets.values.get({
+        // Buscar en ClientesHabituales
+        const responseClientes = await gapi.client.sheets.spreadsheets.values.get({
             spreadsheetId: spreadsheetId,
             range: 'ClientesHabituales!A:E'
         });
         
+        // Buscar alquileres pendientes en Alquileres
+        const responseAlquileres = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Alquileres!A:M'
+        });
+        
         document.getElementById('cedula-loader').style.display = 'none';
         
-        const rows = response.result.values || [];
-        for (let i = 1; i < rows.length; i++) {
-            if (rows[i][1] && rows[i][1].toString() === cedula) {
-                document.getElementById('nombre-cliente').value = rows[i][0] || '';
-                document.getElementById('celular').value = rows[i][2] || '';
-                document.getElementById('cliente-habitual-alert').style.display = 'flex';
-                document.querySelector('.alert-alquileres').textContent = (rows[i][3] || 0) + ' alquileres';
-                return;
+        const rowsClientes = responseClientes.result.values || [];
+        const rowsAlquileres = responseAlquileres.result.values || [];
+        
+        // Buscar alquileres pendientes (estado = "Alquilado") de este cliente
+        const alquileresPendientes = [];
+        for (let i = 1; i < rowsAlquileres.length; i++) {
+            const row = rowsAlquileres[i];
+            if (row[1] && row[1].toString() === cedula && row[12] === 'Alquilado') {
+                alquileresPendientes.push({
+                    disfraz: row[3],
+                    fechaDevolucion: row[6]
+                });
             }
         }
         
-        document.getElementById('cliente-habitual-alert').style.display = 'none';
+        // Buscar datos del cliente habitual
+        let clienteEncontrado = false;
+        for (let i = 1; i < rowsClientes.length; i++) {
+            if (rowsClientes[i][1] && rowsClientes[i][1].toString() === cedula) {
+                document.getElementById('nombre-cliente').value = rowsClientes[i][0] || '';
+                document.getElementById('celular').value = rowsClientes[i][2] || '';
+                
+                const totalAlquileres = rowsClientes[i][3] || 0;
+                
+                // Mostrar alerta de cliente habitual
+                let alertHTML = '<span class="alert-icon">⭐</span>';
+                alertHTML += '<span class="alert-text">Cliente frecuente - <strong class="alert-alquileres">' + totalAlquileres + ' alquileres</strong></span>';
+                
+                document.getElementById('cliente-habitual-alert').innerHTML = alertHTML;
+                document.getElementById('cliente-habitual-alert').style.display = 'flex';
+                document.getElementById('cliente-habitual-alert').className = 'cliente-habitual-alert';
+                
+                clienteEncontrado = true;
+                break;
+            }
+        }
+        
+        // Mostrar alerta de deudas pendientes si hay
+        if (alquileresPendientes.length > 0) {
+            let deudaHTML = '<div class="alerta-deuda">';
+            deudaHTML += '<span class="deuda-icon">⚠️</span>';
+            deudaHTML += '<span class="deuda-titulo">¡ATENCIÓN! Cliente con ' + alquileresPendientes.length + ' disfraz(es) sin devolver:</span>';
+            deudaHTML += '<ul class="deuda-lista">';
+            alquileresPendientes.forEach(a => {
+                deudaHTML += '<li>🎭 <strong>' + a.disfraz + '</strong> - Debía devolver: ' + a.fechaDevolucion + '</li>';
+            });
+            deudaHTML += '</ul>';
+            deudaHTML += '</div>';
+            
+            document.getElementById('alerta-deudas').innerHTML = deudaHTML;
+            document.getElementById('alerta-deudas').style.display = 'block';
+        } else {
+            document.getElementById('alerta-deudas').style.display = 'none';
+            document.getElementById('alerta-deudas').innerHTML = '';
+        }
+        
+        if (!clienteEncontrado && alquileresPendientes.length === 0) {
+            document.getElementById('cliente-habitual-alert').style.display = 'none';
+        }
         
     } catch (e) {
         document.getElementById('cedula-loader').style.display = 'none';
@@ -486,18 +540,19 @@ function mostrarRecibo(datos) {
             <div class="recibo-logo">🎭</div>
             <div class="recibo-titulo">DISFRACES FANTASÍA</div>
             <div class="recibo-subtitulo">Alquiler de Disfraces</div>
-            <div class="recibo-subtitulo">Calle Ayacucho, Oruro - Tel: 76133121</div>
+            <div class="recibo-subtitulo">Calle Ayacucho, Oruro</div>
+            <div class="recibo-subtitulo">Tel: 76133121</div>
         </div>
         
         <div class="recibo-info">
             <div class="recibo-linea"><span class="recibo-linea-label">Fecha:</span><span>${datos.fechaAlquiler}</span></div>
             <div class="recibo-linea"><span class="recibo-linea-label">Cliente:</span><span>${datos.nombre}</span></div>
             <div class="recibo-linea"><span class="recibo-linea-label">CI:</span><span>${datos.cedula}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Celular:</span><span>${datos.celular}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Cel:</span><span>${datos.celular}</span></div>
         </div>
         
         <div class="recibo-seccion">
-            <div class="recibo-seccion-titulo">🎭 DISFRAZ ALQUILADO</div>
+            <div class="recibo-seccion-titulo">🎭 DISFRAZ</div>
             <div class="recibo-linea"><span>${datos.disfraz}</span></div>
             <div class="recibo-linea"><span class="recibo-linea-label">Estado:</span><span>${datos.condiciones}</span></div>
         </div>
@@ -512,20 +567,23 @@ function mostrarRecibo(datos) {
             <div class="recibo-seccion-titulo">🛡️ GARANTÍA</div>
             <div class="recibo-linea"><span class="recibo-linea-label">Dinero:</span><span>Bs. ${datos.garantiaDinero || '0'}</span></div>
             ${datos.garantiaObjeto ? `<div class="recibo-linea"><span class="recibo-linea-label">Objeto:</span><span>${datos.garantiaObjeto}</span></div>` : ''}
-            ${datos.descripcionGarantia ? `<div class="recibo-linea"><span style="font-size:0.8rem;color:#666;">${datos.descripcionGarantia}</span></div>` : ''}
         </div>
         
         <div class="recibo-total">
-            <div class="recibo-total-label">PRECIO ALQUILER</div>
+            <div class="recibo-total-label">TOTAL</div>
             <div class="recibo-total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
         </div>
         
-        ${datos.observaciones ? `<div class="recibo-seccion"><div class="recibo-seccion-titulo">📝 OBSERVACIONES</div><div>${datos.observaciones}</div></div>` : ''}
+        <div class="recibo-firma">
+            <div class="recibo-firma-titulo">FIRMA DEL CLIENTE</div>
+            <div class="recibo-firma-linea"></div>
+            <div class="recibo-firma-nombre">${datos.nombre}</div>
+            <div class="recibo-firma-legal">Acepto las condiciones de alquiler. Me comprometo a devolver el disfraz en la fecha acordada y en buen estado. En caso de daño o pérdida, asumo la responsabilidad del costo total.</div>
+        </div>
         
         <div class="recibo-footer">
-            <p>La garantía será devuelta al entregar el disfraz en buen estado.</p>
-            <div class="recibo-gracias">¡Gracias por su preferencia!</div>
-            <div class="recibo-numero">Recibo N° ${datos.numeroRecibo}</div>
+            <div class="recibo-gracias">¡Gracias!</div>
+            <div class="recibo-numero">N° ${datos.numeroRecibo}</div>
         </div>
     `;
     
