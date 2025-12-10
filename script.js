@@ -3,7 +3,6 @@
 // ========================================
 const CLIENT_ID = '488089624210-ns62tr4g9rqov3k2b85965c4p4fto028.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyDsIk-N9hDAzZN7vc9b2rUIhcA7D8ViOFk';
-const SPREADSHEET_ID = ''; // Se llenará automáticamente al buscar
 const SPREADSHEET_NAME = 'Disfraces Fantasía - Sistema';
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly';
@@ -75,23 +74,6 @@ function handleTokenResponse(resp) {
 // ========================================
 async function buscarSpreadsheet() {
     try {
-        // Intentar usar un ID conocido o buscar
-        // Primero intenta con el ID que ya tienes en la URL de tu hoja
-        const testId = await obtenerSpreadsheetId();
-        if (testId) {
-            spreadsheetId = testId;
-            console.log('✅ Spreadsheet encontrado:', spreadsheetId);
-            verificarHojas();
-        }
-    } catch (error) {
-        console.error('Error buscando spreadsheet:', error);
-        alert('Error: No se pudo encontrar la hoja de cálculo. Verifica los permisos.');
-    }
-}
-
-async function obtenerSpreadsheetId() {
-    // Intenta buscar por nombre usando Drive API
-    try {
         await gapi.client.load('drive', 'v3');
         const response = await gapi.client.drive.files.list({
             q: "name='" + SPREADSHEET_NAME + "' and mimeType='application/vnd.google-apps.spreadsheet'",
@@ -99,15 +81,24 @@ async function obtenerSpreadsheetId() {
         });
         
         if (response.result.files && response.result.files.length > 0) {
-            return response.result.files[0].id;
+            spreadsheetId = response.result.files[0].id;
+            console.log('✅ Spreadsheet encontrado:', spreadsheetId);
+            verificarHojas();
+        } else {
+            const id = prompt('No se encontró la hoja "' + SPREADSHEET_NAME + '".\n\nIngresa el ID de tu Google Sheet.\n\nLo encuentras en la URL:\nhttps://docs.google.com/spreadsheets/d/[ESTE_ES_EL_ID]/edit');
+            if (id) {
+                spreadsheetId = id;
+                verificarHojas();
+            }
         }
-    } catch (e) {
-        console.log('No se pudo buscar en Drive, ingresa el ID manualmente');
+    } catch (error) {
+        console.error('Error buscando spreadsheet:', error);
+        const id = prompt('Ingresa el ID de tu Google Sheet:');
+        if (id) {
+            spreadsheetId = id;
+            verificarHojas();
+        }
     }
-    
-    // Si no encuentra, pedir al usuario
-    const id = prompt('Ingresa el ID de tu Google Sheet.\n\nLo encuentras en la URL:\nhttps://docs.google.com/spreadsheets/d/[ESTE_ES_EL_ID]/edit');
-    return id;
 }
 
 // ========================================
