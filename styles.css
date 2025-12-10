@@ -1241,3 +1241,30 @@ footer {
     color: #666;
     margin-top: 0.5rem;
 }
+
+/* ========================================
+   PLACEHOLDER DE INPUTS (texto de ejemplo)
+   ======================================== */
+
+input::placeholder,
+textarea::placeholder,
+select::placeholder {
+    color: rgba(0, 0, 0, 0.15);  /* Muy transparente */
+    font-weight: 300;
+    font-style: italic;
+    opacity: 1;
+}
+
+/* Para navegadores antiguos */
+input::-webkit-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
+input::-moz-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
+input:-ms-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
+
+/* Texto real ingresado - negrita y diferente tipografía */
+input,
+textarea,
+select {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    font-weight: 700;
+    color: #1a1a2e;
+}
