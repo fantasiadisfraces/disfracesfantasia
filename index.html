@@ -1,1421 +1,450 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    color: #333;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    background-attachment: fixed;
-}
-
-/* Contenedor de secciones */
-section {
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-    border-radius: 30px;
-    margin: 2rem auto;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-}
-
-section:first-of-type {
-    margin-top: 0;
-    border-radius: 0;
-    background: transparent;
-}
-
-/* Header */
-header {
-    background: rgba(102, 126, 234, 0.9);
-    backdrop-filter: blur(10px);
-    color: white;
-    padding: 1rem 0;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-}
-
-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-}
-
-.logo {
-    font-size: 1.8rem;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-}
-
-.logo-img {
-    height: 50px;
-    width: auto;
-    border-radius: 10px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
-}
-
-.nav-links {
-    display: flex;
-    gap: 2rem;
-    list-style: none;
-}
-
-.nav-links a {
-    color: white;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.nav-clientes {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-}
-
-/* Hero Section */
-.hero {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 150px 2rem 100px;
-    text-align: center;
-    margin-top: 80px;
-    position: relative;
-    overflow: hidden;
-}
-
-.hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.hero p {
-    font-size: 1.3rem;
-    margin-bottom: 2rem;
-    opacity: 0.9;
-}
-
-.cta-button {
-    background: white;
-    color: #667eea;
-    padding: 1rem 2.5rem;
-    border: none;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-}
-
-/* Sections */
-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
-}
-
-h2 {
-    font-size: 2.5rem;
-    text-align: center;
-    margin-bottom: 3rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    position: relative;
-}
-
-h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 80px;
-    height: 4px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 2px;
-}
-
-/* Servicios */
-.servicios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-}
-
-.servicio-card {
-    background: linear-gradient(145deg, #ffffff 0%, #f8f9ff 100%);
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-    text-align: center;
-    transition: transform 0.3s;
-}
-
-.servicio-card:hover {
-    transform: translateY(-10px);
-}
-
-.servicio-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.servicio-card h3 {
-    color: #764ba2;
-    margin-bottom: 1rem;
-}
-
-/* Catálogo */
-.catalogo-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-}
-
-.disfraz-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-    transition: transform 0.3s;
-}
-
-.disfraz-card:hover {
-    transform: translateY(-10px);
-}
-
-.disfraz-img {
-    width: 100%;
-    height: 250px;
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 4rem;
-}
-
-.disfraz-info {
-    padding: 1.5rem;
-}
-
-.precio {
-    color: #667eea;
-    font-size: 1.5rem;
-    font-weight: bold;
-    margin-top: 1rem;
-}
-
-/* Precios */
-.precios-container {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 3rem;
-    border-radius: 30px;
-    text-align: center;
-}
-
-.precios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.precio-item {
-    background: rgba(255,255,255,0.15);
-    padding: 2rem;
-    border-radius: 20px;
-}
-
-.precio-item h3 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-}
-
-/* Contacto */
-.contacto-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    justify-content: center;
-}
-
-.contacto-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 20px;
-    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
-    text-align: center;
-    flex: 1 1 280px;
-    max-width: 350px;
-}
-
-.mapa-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-}
-
-.mapa-container iframe {
-    width: 100%;
-    height: 350px;
-    border: 0;
-    border-radius: 15px;
-}
-
-.btn-mapa {
-    display: inline-block;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 1rem;
-}
-
-.contacto-icon img {
-    width: 60px;
-    height: 60px;
-}
-
-.contacto-card h3 {
-    color: #764ba2;
-    margin: 1rem 0;
-}
-
-.contacto-card a {
-    color: #667eea;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* Redes Sociales */
-.redes-sociales {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.red-social img {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    transition: transform 0.3s;
-}
-
-.red-social:hover img {
-    transform: scale(1.2);
-}
-
-/* Footer */
-footer {
-    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    color: white;
-    text-align: center;
-    padding: 2rem;
-    margin-top: 4rem;
-}
-
-/* ========================================
-   SISTEMA DE CLIENTES
-   ======================================== */
-
-/* Modal Base */
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    z-index: 2000;
-    overflow-y: auto;
-    padding: 2rem;
-}
-
-.modal.active {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 25px;
-    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.3);
-    position: relative;
-    animation: modalSlideIn 0.4s ease;
-    margin: auto;
-}
-
-@keyframes modalSlideIn {
-    from { opacity: 0; transform: translateY(-50px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.close-modal {
-    position: absolute;
-    top: 1rem;
-    right: 1.5rem;
-    font-size: 2rem;
-    color: #999;
-    cursor: pointer;
-    z-index: 10;
-}
-
-/* Modal Login */
-.modal-login-content {
-    max-width: 400px;
-    width: 100%;
-    padding: 3rem;
-}
-
-.login-header {
-    text-align: center;
-    margin-bottom: 2rem;
-}
-
-.login-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-}
-
-.login-header h2 {
-    color: #667eea;
-    font-size: 1.8rem;
-}
-
-.login-header h2::after {
-    display: none;
-}
-
-.form-group {
-    margin-bottom: 1.5rem;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #555;
-    font-weight: 600;
-}
-
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 0.9rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: border-color 0.3s;
-}
-
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    border-color: #667eea;
-    outline: none;
-}
-
-.btn-login {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.login-error {
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 1rem;
-}
-
-/* Modal Clientes */
-.modal-clientes-content {
-    max-width: 950px;
-    width: 100%;
-    max-height: 95vh;
-    overflow-y: auto;
-}
-
-.modal-header-clientes {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1.2rem 2rem;
-    border-radius: 25px 25px 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-}
-
-.modal-header-clientes h2 {
-    color: white;
-    -webkit-text-fill-color: white;
-    margin: 0;
-    font-size: 1.4rem;
-}
-
-.modal-header-clientes h2::after {
-    display: none;
-}
-
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.btn-logout {
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-}
-
-.modal-header-clientes .close-modal {
-    position: static;
-    color: white;
-}
-
-/* Tabs */
-.tabs-container {
-    display: flex;
-    background: #f5f5f5;
-    padding: 0.5rem;
-    gap: 0.3rem;
-}
-
-.tab-btn {
-    flex: 1;
-    padding: 0.8rem 0.5rem;
-    border: none;
-    background: transparent;
-    color: #666;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-.tab-btn.active {
-    background: white;
-    color: #667eea;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.tab-content {
-    display: none;
-    padding: 1.5rem;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-/* Form */
-.form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 0.5rem;
-}
-
-.form-group.full-width {
-    grid-column: 1 / -1;
-}
-
-/* Input con loader */
-.input-with-loader {
-    position: relative;
-}
-
-.input-loader {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    to { transform: translateY(-50%) rotate(360deg); }
-}
-
-.input-hint {
-    display: block;
-    font-size: 0.75rem;
-    color: #888;
-    margin-top: 0.3rem;
-}
-
-/* Cliente Habitual Alert */
-.cliente-habitual-alert {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    border: 2px solid #f093fb;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    animation: slideDown 0.3s ease;
-}
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.alert-icon {
-    font-size: 2rem;
-}
-
-.alert-text {
-    font-weight: 600;
-    color: #764ba2;
-}
-
-.alert-alquileres {
-    margin-left: auto;
-    background: #764ba2;
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-}
-
-/* Sección Garantía */
-.garantia-section {
-    background: linear-gradient(145deg, #f8f9ff 0%, #e8ebff 100%);
-    border: 2px solid #667eea;
-    border-radius: 15px;
-    padding: 1.5rem;
-    margin: 1.5rem 0;
-}
-
-.section-title {
-    color: #667eea;
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Botones de acción */
-.form-actions {
-    display: flex;
-    gap: 0.8rem;
-    margin-top: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.btn-registrar {
-    flex: 1;
-    min-width: 180px;
-    padding: 1rem;
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-imprimir {
-    padding: 1rem 1.5rem;
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.btn-limpiar {
-    padding: 1rem 1.5rem;
-    background: #f5f5f5;
-    color: #666;
-    border: 2px solid #ddd;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.mensaje-resultado {
-    margin-top: 1rem;
-    padding: 1rem;
-    border-radius: 10px;
-    text-align: center;
-    display: none;
-}
-
-.mensaje-resultado.exito {
-    display: block;
-    background: #d4edda;
-    color: #155724;
-}
-
-.mensaje-resultado.error {
-    display: block;
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* Búsqueda */
-.busqueda-input-wrapper {
-    display: flex;
-    gap: 0.8rem;
-}
-
-.busqueda-input-wrapper input {
-    flex: 1;
-}
-
-.btn-buscar {
-    padding: 0.9rem 1.5rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.resultados-container {
-    min-height: 150px;
-}
-
-.placeholder-text {
-    text-align: center;
-    color: #999;
-    padding: 2rem;
-    font-style: italic;
-}
-
-/* Cards de Resultado */
-.resultado-card {
-    background: white;
-    border: 2px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-bottom: 1rem;
-}
-
-.resultado-card.alquilado {
-    border-left: 5px solid #e74c3c;
-}
-
-.resultado-card.devuelto {
-    border-left: 5px solid #27ae60;
-}
-
-.resultado-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.8rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.resultado-nombre {
-    font-size: 1.1rem;
-    font-weight: bold;
-}
-
-.resultado-estado {
-    padding: 0.2rem 0.6rem;
-    border-radius: 15px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.estado-alquilado {
-    background: #fdecea;
-    color: #e74c3c;
-}
-
-.estado-devuelto {
-    background: #d4edda;
-    color: #27ae60;
-}
-
-.resultado-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 0.5rem;
-    font-size: 0.85rem;
-    color: #666;
-}
-
-.resultado-info strong {
-    color: #333;
-}
-
-.resultado-actions {
-    margin-top: 1rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid #eee;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.btn-devolucion {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-.btn-recibo-busqueda {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 0.85rem;
-}
-
-/* Modal Devolución */
-.modal-inline {
-    background: #f8f9ff;
-    border: 2px solid #667eea;
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-top: 1rem;
-}
-
-.devolucion-content h3 {
-    color: #667eea;
-    margin-bottom: 1rem;
-}
-
-.garantia-devolucion-info {
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    padding: 0.8rem;
-    margin: 1rem 0;
-}
-
-.garantia-devolucion-info h4 {
-    color: #856404;
-    margin-bottom: 0.3rem;
-    font-size: 0.9rem;
-}
-
-.devolucion-actions {
-    display: flex;
-    gap: 0.8rem;
-    margin-top: 1rem;
-}
-
-.btn-confirmar {
-    padding: 0.7rem 1.2rem;
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-.btn-cancelar {
-    padding: 0.7rem 1.2rem;
-    background: #f5f5f5;
-    color: #666;
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-/* Historial */
-.historial-controles {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn-cargar {
-    padding: 0.7rem 1.2rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#filtro-estado {
-    padding: 0.7rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
-}
-
-.tabla-container {
-    overflow-x: auto;
-}
-
-.tabla-registros {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-}
-
-.tabla-registros th {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.8rem 0.5rem;
-    text-align: left;
-}
-
-.tabla-registros td {
-    padding: 0.6rem 0.5rem;
-    border-bottom: 1px solid #eee;
-}
-
-.tabla-registros tr:hover {
-    background: #f8f9ff;
-}
-
-/* Clientes Habituales */
-.clientes-habituales-header {
-    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
-}
-
-.clientes-habituales-header h3 {
-    color: #764ba2;
-    margin-bottom: 0.3rem;
-}
-
-.clientes-habituales-header p {
-    font-size: 0.85rem;
-    color: #666;
-}
-
-/* Loading */
-.loading {
-    text-align: center;
-    padding: 2rem;
-    color: #667eea;
-}
-
-.loading::after {
-    content: '';
-    display: inline-block;
-    width: 18px;
-    height: 18px;
-    border: 3px solid #667eea;
-    border-top-color: transparent;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: 0.5rem;
-    vertical-align: middle;
-}
-
-/* ========================================
-   RECIBO DE IMPRESIÓN
-   ======================================== */
-
-.modal-recibo-content {
-    max-width: 280px;
-    width: 100%;
-    background: white;
-}
-
-.recibo-no-print {
-    display: flex;
-    gap: 0.5rem;
-    padding: 0.8rem;
-    background: #f5f5f5;
-    border-radius: 15px 15px 0 0;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.btn-cerrar-recibo {
-    padding: 0.5rem 0.8rem;
-    background: #e74c3c;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-.btn-print-recibo {
-    padding: 0.5rem 1rem;
-    background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 0.8rem;
-}
-
-.recibo-contenido {
-    padding: 0.8rem;
-    font-family: 'Courier New', monospace;
-    font-size: 0.7rem;
-    line-height: 1.3;
-}
-
-.recibo-header {
-    text-align: center;
-    border-bottom: 1px dashed #333;
-    padding-bottom: 0.5rem;
-    margin-bottom: 0.5rem;
-}
-
-.recibo-logo {
-    font-size: 1.5rem;
-    margin-bottom: 0.2rem;
-}
-
-.recibo-titulo {
-    font-size: 0.9rem;
-    font-weight: bold;
-    margin-bottom: 0.1rem;
-}
-
-.recibo-subtitulo {
-    font-size: 0.6rem;
-    color: #666;
-}
-
-.recibo-info {
-    margin-bottom: 0.5rem;
-}
-
-.recibo-linea {
-    display: flex;
-    justify-content: space-between;
-    padding: 0.15rem 0;
-    border-bottom: 1px dotted #ccc;
-    font-size: 0.65rem;
-}
-
-.recibo-linea-label {
-    font-weight: bold;
-    color: #555;
-}
-
-.recibo-seccion {
-    margin: 0.5rem 0;
-    padding: 0.4rem;
-    background: #f9f9f9;
-    border-radius: 4px;
-}
-
-.recibo-seccion-titulo {
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 0.3rem;
-    font-size: 0.7rem;
-}
-
-.recibo-total {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 0.5rem;
-    border-radius: 6px;
-    text-align: center;
-    margin: 0.5rem 0;
-}
-
-.recibo-total-label {
-    font-size: 0.65rem;
-}
-
-.recibo-total-monto {
-    font-size: 1.2rem;
-    font-weight: bold;
-}
-
-.recibo-footer {
-    text-align: center;
-    border-top: 1px dashed #333;
-    padding-top: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.recibo-footer p {
-    font-size: 0.55rem;
-    color: #666;
-    margin: 0.1rem 0;
-}
-
-.recibo-gracias {
-    font-size: 0.75rem;
-    font-weight: bold;
-    color: #764ba2;
-    margin-top: 0.3rem;
-}
-
-.recibo-numero {
-    font-size: 0.55rem;
-    color: #999;
-    margin-top: 0.5rem;
-}
-
-/* Sección de firma del cliente */
-.recibo-firma {
-    margin-top: 1rem;
-    padding-top: 0.5rem;
-    border-top: 1px dashed #333;
-}
-
-.recibo-firma-titulo {
-    font-size: 0.6rem;
-    color: #333;
-    text-align: center;
-    margin-bottom: 0.3rem;
-}
-
-.recibo-firma-linea {
-    border-bottom: 1px solid #333;
-    height: 25px;
-    margin: 0.5rem auto;
-    width: 80%;
-}
-
-.recibo-firma-nombre {
-    font-size: 0.55rem;
-    text-align: center;
-    color: #666;
-}
-
-.recibo-firma-legal {
-    font-size: 0.5rem;
-    text-align: center;
-    color: #888;
-    margin-top: 0.5rem;
-    line-height: 1.2;
-}
-
-/* Estilos de impresión - 47mm */
-@media print {
-    @page {
-        size: 47mm auto;
-        margin: 0;
-    }
-    
-    body * {
-        visibility: hidden;
-    }
-    
-    #modal-recibo,
-    #modal-recibo * {
-        visibility: visible;
-    }
-    
-    #modal-recibo {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 47mm;
-        background: white;
-        padding: 0;
-        margin: 0;
-    }
-    
-    .modal-recibo-content {
-        box-shadow: none;
-        max-width: 47mm;
-        width: 47mm;
-        border-radius: 0;
-    }
-    
-    .recibo-no-print {
-        display: none !important;
-    }
-    
-    .recibo-contenido {
-        padding: 1mm;
-        font-size: 7pt;
-        width: 45mm;
-    }
-    
-    .recibo-logo {
-        font-size: 14pt;
-    }
-    
-    .recibo-titulo {
-        font-size: 9pt;
-    }
-    
-    .recibo-subtitulo {
-        font-size: 6pt;
-    }
-    
-    .recibo-linea {
-        font-size: 6pt;
-        padding: 0.5mm 0;
-    }
-    
-    .recibo-seccion-titulo {
-        font-size: 7pt;
-    }
-    
-    .recibo-total-monto {
-        font-size: 12pt;
-    }
-    
-    .recibo-footer p {
-        font-size: 5pt;
-    }
-    
-    .recibo-gracias {
-        font-size: 7pt;
-    }
-    
-    .recibo-numero {
-        font-size: 5pt;
-    }
-    
-    .recibo-firma-linea {
-        height: 8mm;
-    }
-    
-    .recibo-firma-titulo,
-    .recibo-firma-nombre {
-        font-size: 5pt;
-    }
-    
-    .recibo-firma-legal {
-        font-size: 4pt;
-    }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    nav {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-
-    .logo {
-        font-size: 1.3rem;
-    }
-
-    .logo-img {
-        height: 40px;
-    }
-
-    .nav-links {
-        width: 100%;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        font-size: 0.8rem;
-    }
-
-    .hero {
-        margin-top: 150px;
-        padding: 60px 1.5rem;
-    }
-
-    .hero h1 {
-        font-size: 2rem;
-    }
-
-    h2 {
-        font-size: 1.8rem;
-    }
-
-    .modal {
-        padding: 0.5rem;
-    }
-
-    .tab-btn {
-        font-size: 0.75rem;
-        padding: 0.6rem 0.3rem;
-    }
-
-    .tab-content {
-        padding: 1rem;
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    .form-actions {
-        flex-direction: column;
-    }
-
-    .busqueda-input-wrapper {
-        flex-direction: column;
-    }
-
-    .devolucion-actions {
-        flex-direction: column;
-    }
-}
-
-/* ========================================
-   BOTÓN DE GOOGLE LOGIN
-   ======================================== */
-
-.google-login-container {
-    text-align: center;
-    padding: 2rem 0;
-}
-
-.btn-google {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 28px;
-    background: white;
-    color: #444;
-    border: 2px solid #ddd;
-    border-radius: 50px;
-    font-size: 1.1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-
-.btn-google:hover {
-    background: #f8f9fa;
-    border-color: #4285F4;
-    box-shadow: 0 4px 20px rgba(66, 133, 244, 0.3);
-    transform: translateY(-2px);
-}
-
-.btn-google svg {
-    flex-shrink: 0;
-}
-
-.login-hint {
-    margin-top: 1.5rem;
-    font-size: 0.85rem;
-    color: #888;
-}
-
-/* Ajuste para el modal de login */
-.modal-login-content {
-    max-width: 420px;
-}
-
-.login-header p {
-    color: #666;
-    margin-top: 0.5rem;
-}
-
-/* ========================================
-   PLACEHOLDER DE INPUTS (texto de ejemplo)
-   ======================================== */
-
-input::placeholder,
-textarea::placeholder,
-select::placeholder {
-    color: rgba(0, 0, 0, 0.15);  /* Muy transparente */
-    font-weight: 300;
-    font-style: italic;
-    opacity: 1;
-}
-
-/* Para navegadores antiguos */
-input::-webkit-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
-input::-moz-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
-input:-ms-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
-
-/* Texto real ingresado - negrita y Arial */
-input,
-textarea,
-select {
-    font-family: Arial, Helvetica, sans-serif;
-    font-weight: 700;
-    color: #1a1a2e;
-}
-
-/* ========================================
-   ALERTA DE DEUDAS PENDIENTES
-   ======================================== */
-
-.alerta-deuda {
-    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
-    color: white;
-    padding: 1rem;
-    border-radius: 12px;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba(238, 90, 90, 0.4);
-    animation: pulseDeuda 2s infinite;
-}
-
-@keyframes pulseDeuda {
-    0%, 100% { box-shadow: 0 4px 15px rgba(238, 90, 90, 0.4); }
-    50% { box-shadow: 0 4px 25px rgba(238, 90, 90, 0.7); }
-}
-
-.deuda-icon {
-    font-size: 1.5rem;
-    margin-right: 0.5rem;
-}
-
-.deuda-titulo {
-    font-weight: bold;
-    font-size: 1rem;
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
-.deuda-lista {
-    list-style: none;
-    padding: 0;
-    margin: 0.5rem 0 0 0;
-}
-
-.deuda-lista li {
-    background: rgba(255, 255, 255, 0.2);
-    padding: 0.5rem 0.8rem;
-    border-radius: 8px;
-    margin-bottom: 0.3rem;
-    font-size: 0.9rem;
-}
-
-.deuda-lista li strong {
-    color: #fff;
-}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disfraces Fantasía - Alquiler de Disfraces</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google APIs -->
+    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
+    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo-tienda.jpg" alt="Disfraces Fantasía" class="logo-img">
+                <span>Disfraces Fantasía</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#inicio">Inicio</a></li>
+                <li><a href="#catalogo">Catálogo</a></li>
+                <li><a href="#precios">Precios</a></li>
+                <li><a href="#redes">Contacto</a></li>
+                <li><a href="#" id="btn-clientes" class="nav-clientes">👥 Clientes</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="inicio">
+        <h1>¡Vive tu Personaje Favorito!</h1>
+        <p>Alquila el disfraz perfecto para cualquier ocasión</p>
+        <a href="#catalogo" class="cta-button">Ver Disfraces</a>
+    </section>
+
+    <!-- Servicios -->
+    <section id="servicios">
+        <h2>Nuestros Servicios</h2>
+        <div class="servicios-grid">
+            <div class="servicio-card">
+                <div class="servicio-icon">🎪</div>
+                <h3>Alquiler por Días</h3>
+                <p>Renta tu disfraz por 1, 3 o más días según tus necesidades</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icon">✨</div>
+                <h3>Amplio Catálogo</h3>
+                <p>Más de 200 disfraces para todas las edades y ocasiones</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icon">👔</div>
+                <h3>Disfraces Limpiados</h3>
+                <p>Todos nuestros disfraces se entregan lavados y desinfectados</p>
+            </div>
+            <div class="servicio-card">
+                <div class="servicio-icon">🎁</div>
+                <h3>Accesorios Incluidos</h3>
+                <p>Complementos y accesorios para completar tu look</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catálogo -->
+    <section id="catalogo">
+        <h2>Catálogo de Disfraces</h2>
+        <div class="catalogo-grid">
+            <div class="disfraz-card">
+                <div class="disfraz-img">🦸‍♂️</div>
+                <div class="disfraz-info">
+                    <h3>Superhéroes</h3>
+                    <p>Spider-Man, Batman, Superman, Wonder Woman y más</p>
+                    <p class="precio">Desde Bs. 50/día</p>
+                </div>
+            </div>
+            <div class="disfraz-card">
+                <div class="disfraz-img">👸</div>
+                <div class="disfraz-info">
+                    <h3>Princesas</h3>
+                    <p>Elsa, Cenicienta, Blanca Nieves, Bella y más</p>
+                    <p class="precio">Desde Bs. 45/día</p>
+                </div>
+            </div>
+            <div class="disfraz-card">
+                <div class="disfraz-img">🧟</div>
+                <div class="disfraz-info">
+                    <h3>Terror</h3>
+                    <p>Zombies, vampiros, brujas y criaturas espeluznantes</p>
+                    <p class="precio">Desde Bs. 40/día</p>
+                </div>
+            </div>
+            <div class="disfraz-card">
+                <div class="disfraz-img">🤡</div>
+                <div class="disfraz-info">
+                    <h3>Personajes</h3>
+                    <p>Payasos, mimos, animales y mucho más</p>
+                    <p class="precio">Desde Bs. 35/día</p>
+                </div>
+            </div>
+            <div class="disfraz-card">
+                <div class="disfraz-img">🏴‍☠️</div>
+                <div class="disfraz-info">
+                    <h3>Piratas</h3>
+                    <p>Capitanes piratas, bucaneros y corsarios</p>
+                    <p class="precio">Desde Bs. 40/día</p>
+                </div>
+            </div>
+            <div class="disfraz-card">
+                <div class="disfraz-img">🎅</div>
+                <div class="disfraz-info">
+                    <h3>Navideños</h3>
+                    <p>Santa Claus, elfos, renos y más</p>
+                    <p class="precio">Desde Bs. 45/día</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Precios -->
+    <section id="precios">
+        <h2>Planes de Alquiler</h2>
+        <div class="precios-container">
+            <p style="font-size: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 1;">💰 Solo Alquilamos - No Vendemos</p>
+            <div class="precios-grid">
+                <div class="precio-item">
+                    <h3>1 Día</h3>
+                    <p>Perfecto para eventos cortos</p>
+                    <p style="margin-top: 1rem;">Desde Bs. 35</p>
+                </div>
+                <div class="precio-item">
+                    <h3>3 Días</h3>
+                    <p>Ideal para fines de semana</p>
+                    <p style="margin-top: 1rem;">Desde Bs. 80</p>
+                </div>
+                <div class="precio-item">
+                    <h3>Semanal</h3>
+                    <p>Para festividades largas</p>
+                    <p style="margin-top: 1rem;">Desde Bs. 150</p>
+                </div>
+            </div>
+            <p style="margin-top: 2rem; font-size: 0.9rem; position: relative; z-index: 1;">* Depósito reembolsable requerido | Descuentos por grupos</p>
+        </div>
+    </section>
+
+    <!-- Contacto -->
+    <section id="contacto">
+        <h2>Contáctanos</h2>
+        <div class="contacto-grid">
+            <div class="contacto-card mapa-card">
+                <div class="contacto-icon">
+                    <img src="ubicacion-logo.png" alt="Ubicación" style="width: 60px; height: 60px;">
+                </div>
+                <h3>Ubicación</h3>
+                <p>Calle Ayacucho<br>Entre Tejerina y Tarapacá<br>Oruro, Bolivia</p>
+                <div class="mapa-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+                <a href="https://maps.app.goo.gl/bgaBBqzaaxBz6M4f8" class="btn-mapa" target="_blank">
+                    📍 Abrir en Google Maps
+                </a>
+            </div>
+            <div class="contacto-card">
+                <div class="contacto-icon">
+                    <img src="telefono-logo.webp" alt="Teléfono" style="width: 60px; height: 60px;">
+                </div>
+                <h3>Teléfono / Celular</h3>
+                <p><a href="tel:+59176133121">+591 76133121</a></p>
+            </div>
+            <div class="contacto-card">
+                <div class="contacto-icon">
+                    <img src="correo-logo.png" alt="Email" style="width: 60px; height: 60px;">
+                </div>
+                <h3>Email</h3>
+                <p><a href="mailto:info@disfracesfantasia.com">info@disfracesfantasia.com</a></p>
+            </div>
+            <div class="contacto-card">
+                <div class="contacto-icon">
+                    <img src="reloj-logo.png" alt="Horario" style="width: 60px; height: 60px;">
+                </div>
+                <h3>Horario</h3>
+                <p>Lunes a Sábado<br>9:00 AM - 7:00 PM</p>
+            </div>
+        </div>
+
+        <h2 style="margin-top: 4rem;" id="redes">Síguenos en Redes</h2>
+        <div class="redes-sociales">
+            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank">
+                <img src="facebook-logo.png" alt="Facebook">
+            </a>
+            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank">
+                <img src="instagram-logo.png" alt="Instagram">
+            </a>
+            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank">
+                <img src="whatsapp-logo.png" alt="WhatsApp">
+            </a>
+            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank">
+                <img src="tiktok-logo.png" alt="TikTok">
+            </a>
+        </div>
+    </section>
+
+    <!-- Modal de Login con Google -->
+    <div id="modal-login" class="modal">
+        <div class="modal-content modal-login-content">
+            <span class="close-modal">&times;</span>
+            <div class="login-header">
+                <div class="login-icon">🔐</div>
+                <h2>Acceso al Sistema</h2>
+                <p>Inicia sesión con tu cuenta de Google para acceder al sistema de clientes</p>
+            </div>
+            <div class="google-login-container">
+                <button id="btn-google-login" class="btn-google">
+                    <svg width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Iniciar sesión con Google
+                </button>
+                <p class="login-hint">Solo personal autorizado de Disfraces Fantasía</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Gestión de Clientes -->
+    <div id="modal-clientes" class="modal">
+        <div class="modal-content modal-clientes-content">
+            <div class="modal-header-clientes">
+                <h2>👥 Gestión de Clientes</h2>
+                <div class="header-actions">
+                    <span id="usuario-logueado"></span>
+                    <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
+                    <span class="close-modal">&times;</span>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <button class="tab-btn active" data-tab="registro">📝 Nuevo</button>
+                <button class="tab-btn" data-tab="buscar">🔍 Buscar</button>
+                <button class="tab-btn" data-tab="historial">📋 Historial</button>
+                <button class="tab-btn" data-tab="clientes-habituales">⭐ Habituales</button>
+            </div>
+
+            <!-- Tab: Nuevo Registro -->
+            <div id="tab-registro" class="tab-content active">
+                <form id="form-registro">
+                    <!-- Indicador de cliente habitual -->
+                    <div id="cliente-habitual-alert" class="cliente-habitual-alert" style="display: none;">
+                        <span class="alert-icon">⭐</span>
+                        <span class="alert-text">¡Cliente habitual detectado! Datos cargados.</span>
+                        <span class="alert-alquileres"></span>
+                    </div>
+                    
+                    <!-- Alerta de deudas pendientes -->
+                    <div id="alerta-deudas" style="display: none;"></div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="cedula">🪪 Cédula de Identidad</label>
+                            <div class="input-with-loader">
+                                <input type="text" id="cedula" placeholder="Ej: 12345678 LP" required>
+                                <span id="cedula-loader" class="input-loader" style="display: none;">🔄</span>
+                            </div>
+                            <small class="input-hint">Ingresa CI para autocompletar si es cliente habitual</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="nombre-cliente">👤 Nombre Completo</label>
+                            <input type="text" id="nombre-cliente" placeholder="Ej: Juan Pérez García" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="celular">📱 Celular</label>
+                            <input type="tel" id="celular" placeholder="Ej: 76133121" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="disfraz">🎭 Disfraz que Lleva</label>
+                            <input type="text" id="disfraz" placeholder="Ej: Spider-Man adulto talla M" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="precio-alquiler">💲 Precio Alquiler (Bs.)</label>
+                            <input type="number" id="precio-alquiler" placeholder="Ej: 50" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="condiciones">📋 Condiciones del Disfraz</label>
+                            <select id="condiciones" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Excelente">✨ Excelente - Como nuevo</option>
+                                <option value="Bueno">👍 Bueno - Pequeños detalles</option>
+                                <option value="Regular">⚠️ Regular - Desgaste visible</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha-alquiler">📅 Fecha Alquiler</label>
+                            <input type="date" id="fecha-alquiler" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha-devolucion">📅 Fecha Devolución</label>
+                            <input type="date" id="fecha-devolucion" required>
+                        </div>
+                    </div>
+
+                    <!-- Sección de Garantía -->
+                    <div class="garantia-section">
+                        <h3 class="section-title">🛡️ Garantía del Alquiler</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="garantia-dinero">💵 Garantía en Dinero (Bs.)</label>
+                                <input type="number" id="garantia-dinero" placeholder="Ej: 100" min="0" value="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="garantia-objeto">📦 Garantía en Objeto</label>
+                                <input type="text" id="garantia-objeto" placeholder="Ej: Celular, CI original, etc.">
+                            </div>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="descripcion-garantia">📝 Descripción del Objeto en Garantía</label>
+                            <textarea id="descripcion-garantia" rows="2" placeholder="Marca, modelo, color, estado del objeto..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label for="observaciones">📝 Observaciones Generales</label>
+                        <textarea id="observaciones" rows="2" placeholder="Accesorios incluidos, acuerdos especiales..."></textarea>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-registrar">
+                            <span class="btn-text">✅ Registrar Alquiler</span>
+                            <span class="btn-loading" style="display: none;">⏳ Guardando...</span>
+                        </button>
+                        <button type="button" id="btn-imprimir-recibo" class="btn-imprimir" style="display: none;">
+                            🖨️ Imprimir Recibo
+                        </button>
+                        <button type="reset" class="btn-limpiar">🗑️ Limpiar</button>
+                    </div>
+                </form>
+                <div id="mensaje-registro" class="mensaje-resultado"></div>
+            </div>
+
+            <!-- Tab: Buscar Cliente -->
+            <div id="tab-buscar" class="tab-content">
+                <div class="busqueda-container">
+                    <div class="form-group busqueda-grupo">
+                        <label for="buscar-input">🔍 Buscar por Nombre o Cédula</label>
+                        <div class="busqueda-input-wrapper">
+                            <input type="text" id="buscar-input" placeholder="Escribe nombre o cédula...">
+                            <button id="btn-buscar" class="btn-buscar">Buscar</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="resultados-busqueda" class="resultados-container">
+                    <p class="placeholder-text">Ingresa un nombre o cédula para buscar</p>
+                </div>
+
+                <!-- Modal devolución -->
+                <div id="modal-devolucion" class="modal-inline" style="display: none;">
+                    <div class="devolucion-content">
+                        <h3>📦 Registrar Devolución</h3>
+                        <p id="info-devolucion"></p>
+                        <div class="form-group">
+                            <label for="condiciones-devolucion">Estado del disfraz:</label>
+                            <select id="condiciones-devolucion" required>
+                                <option value="Excelente">✨ Excelente - Sin daños</option>
+                                <option value="Bueno">👍 Bueno - Uso normal</option>
+                                <option value="Dañado">⚠️ Dañado - Requiere reparación</option>
+                                <option value="Muy Dañado">❌ Muy Dañado</option>
+                            </select>
+                        </div>
+                        <div class="garantia-devolucion-info" id="garantia-devolucion-info">
+                            <h4>🛡️ Garantía a devolver:</h4>
+                            <p id="garantia-devolver-texto"></p>
+                        </div>
+                        <div class="form-group">
+                            <label for="notas-devolucion">Notas:</label>
+                            <textarea id="notas-devolucion" rows="2" placeholder="Observaciones..."></textarea>
+                        </div>
+                        <div class="devolucion-actions">
+                            <button id="btn-confirmar-devolucion" class="btn-confirmar">✅ Confirmar</button>
+                            <button id="btn-cancelar-devolucion" class="btn-cancelar">❌ Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab: Historial -->
+            <div id="tab-historial" class="tab-content">
+                <div class="historial-controles">
+                    <button id="btn-cargar-historial" class="btn-cargar">📥 Cargar Registros</button>
+                    <select id="filtro-estado">
+                        <option value="todos">Todos</option>
+                        <option value="Alquilado">🔴 Alquilados</option>
+                        <option value="Devuelto">🟢 Devueltos</option>
+                    </select>
+                </div>
+                <div id="tabla-historial" class="tabla-container">
+                    <p class="placeholder-text">Haz clic en "Cargar Registros"</p>
+                </div>
+            </div>
+
+            <!-- Tab: Clientes Habituales -->
+            <div id="tab-clientes-habituales" class="tab-content">
+                <div class="clientes-habituales-header">
+                    <h3>⭐ Clientes Habituales</h3>
+                    <p>Sus datos se cargan automáticamente al ingresar su CI en nuevo registro.</p>
+                </div>
+                <div class="historial-controles">
+                    <button id="btn-cargar-clientes" class="btn-cargar">📥 Cargar Clientes</button>
+                </div>
+                <div id="tabla-clientes-habituales" class="tabla-container">
+                    <p class="placeholder-text">Haz clic en "Cargar Clientes"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Recibo para Imprimir -->
+    <div id="modal-recibo" class="modal">
+        <div class="modal-content modal-recibo-content">
+            <div class="recibo-no-print">
+                <button id="btn-cerrar-recibo" class="btn-cerrar-recibo">✕ Cerrar</button>
+                <button id="btn-print-recibo" class="btn-print-recibo">🖨️ Imprimir</button>
+            </div>
+            <div id="recibo-contenido" class="recibo-contenido">
+                <!-- Contenido del recibo generado dinámicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Disfraces Fantasía - Alquiler de Disfraces. Todos los derechos reservados.</p>
+        <p style="margin-top: 0.5rem;">Propietaria: Juvilia Espíndola Ugarte</p>
+        <p style="margin-top: 0.5rem;">🎭 ¡Tu evento merece el mejor disfraz!</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
