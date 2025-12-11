@@ -1,9 +1,10 @@
 // ========================================
 // CONFIGURACIÓN DE GOOGLE SHEETS API
+// Lee desde config.js
 // ========================================
-const CLIENT_ID = '488089624210-ns62tr4g9rqov3k2b85965c4p4fto028.apps.googleusercontent.com';
-const API_KEY = 'AIzaSyDsIk-N9hDAzZN7vc9b2rUIhcA7D8ViOFk';
-const SPREADSHEET_ID = '1cHNX8O2BvQRkhr_P5cww5I8hwvQoknBQabLQnjjICLE';
+const CLIENT_ID = CONFIG.CLIENT_ID;
+const API_KEY = CONFIG.API_KEY;
+const SPREADSHEET_ID = CONFIG.GOOGLE_SHEET_ID;
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
