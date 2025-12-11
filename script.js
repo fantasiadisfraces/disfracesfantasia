@@ -3,15 +3,15 @@
 // ========================================
 const CLIENT_ID = '488089624210-ns62tr4g9rqov3k2b85965c4p4fto028.apps.googleusercontent.com';
 const API_KEY = 'AIzaSyDsIk-N9hDAzZN7vc9b2rUIhcA7D8ViOFk';
-const SPREADSHEET_NAME = 'Disfraces Fantasía - Sistema';
+const SPREADSHEET_ID = '1cHNX8O2BvQRkhr_P5cww5I8hwvQoknBQabLQnjjICLE';
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
-const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/drive.readonly';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
 
 // Variables de autenticación
 let tokenClient;
 let gapiInited = false;
 let gisInited = false;
-let spreadsheetId = null;
+let spreadsheetId = SPREADSHEET_ID;
 
 // ========================================
 // VARIABLES GLOBALES
@@ -62,43 +62,13 @@ function checkReady() {
 function handleTokenResponse(resp) {
     if (resp.error !== undefined) {
         console.error('Error de autenticación:', resp);
+        alert('Error al iniciar sesión con Google');
         return;
     }
     usuarioGoogle = true;
     console.log('✅ Autenticado con Google');
-    buscarSpreadsheet();
-}
-
-// ========================================
-// BUSCAR SPREADSHEET POR NOMBRE
-// ========================================
-async function buscarSpreadsheet() {
-    try {
-        await gapi.client.load('drive', 'v3');
-        const response = await gapi.client.drive.files.list({
-            q: "name='" + SPREADSHEET_NAME + "' and mimeType='application/vnd.google-apps.spreadsheet'",
-            fields: 'files(id, name)',
-        });
-        
-        if (response.result.files && response.result.files.length > 0) {
-            spreadsheetId = response.result.files[0].id;
-            console.log('✅ Spreadsheet encontrado:', spreadsheetId);
-            verificarHojas();
-        } else {
-            const id = prompt('No se encontró la hoja "' + SPREADSHEET_NAME + '".\n\nIngresa el ID de tu Google Sheet.\n\nLo encuentras en la URL:\nhttps://docs.google.com/spreadsheets/d/[ESTE_ES_EL_ID]/edit');
-            if (id) {
-                spreadsheetId = id;
-                verificarHojas();
-            }
-        }
-    } catch (error) {
-        console.error('Error buscando spreadsheet:', error);
-        const id = prompt('Ingresa el ID de tu Google Sheet:');
-        if (id) {
-            spreadsheetId = id;
-            verificarHojas();
-        }
-    }
+    console.log('📊 Conectando a hoja ID:', SPREADSHEET_ID);
+    verificarHojas();
 }
 
 // ========================================
