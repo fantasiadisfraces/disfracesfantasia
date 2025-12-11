@@ -529,56 +529,61 @@ function mostrarRecibo(datos) {
     if (!datos) return;
     
     const contenido = document.getElementById('recibo-contenido');
+    const fechaHora = new Date();
+    const fechaFormateada = fechaHora.toLocaleDateString('es-BO', { day: 'numeric', month: 'long', year: 'numeric' });
+    const horaFormateada = fechaHora.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
     
     contenido.innerHTML = `
         <div class="recibo-header">
-            <div class="recibo-logo">🎭</div>
-            <div class="recibo-titulo">DISFRACES FANTASÍA</div>
-            <div class="recibo-subtitulo">Alquiler de Disfraces</div>
-            <div class="recibo-subtitulo">Calle Ayacucho, Oruro</div>
-            <div class="recibo-subtitulo">Tel: 76133121</div>
+            <div class="recibo-brand">DISFRACES FANTASÍA</div>
+            <div class="recibo-sub">Ayacucho, Oruro • 76133121</div>
         </div>
         
-        <div class="recibo-info">
-            <div class="recibo-linea"><span class="recibo-linea-label">Fecha:</span><span>${datos.fechaAlquiler}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Cliente:</span><span>${datos.nombre}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">CI:</span><span>${datos.cedula}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Cel:</span><span>${datos.celular}</span></div>
+        <div class="recibo-numero">N° ${datos.numeroRecibo}</div>
+        
+        <div class="recibo-cliente">
+            <div class="cliente-nombre">${datos.nombre}</div>
+            <div class="cliente-dato">CI: ${datos.cedula} • Cel: ${datos.celular}</div>
         </div>
         
-        <div class="recibo-seccion">
-            <div class="recibo-seccion-titulo">🎭 DISFRAZ</div>
-            <div class="recibo-linea"><span>${datos.disfraz}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Estado:</span><span>${datos.condiciones}</span></div>
+        <div class="recibo-disfraz">
+            <div class="disfraz-nombre">${datos.disfraz}</div>
+            <div class="disfraz-estado">${datos.condiciones}</div>
         </div>
         
-        <div class="recibo-seccion">
-            <div class="recibo-seccion-titulo">📅 FECHAS</div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Alquiler:</span><span>${datos.fechaAlquiler}</span></div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Devolución:</span><span>${datos.fechaDevolucion}</span></div>
+        <div class="recibo-fechas">
+            <div class="fecha-item">
+                <div class="fecha-label">Alquiler</div>
+                <div class="fecha-valor">${datos.fechaAlquiler}</div>
+            </div>
+            <div class="fecha-item">
+                <div class="fecha-label">Devolución</div>
+                <div class="fecha-valor">${datos.fechaDevolucion}</div>
+            </div>
         </div>
         
-        <div class="recibo-seccion">
-            <div class="recibo-seccion-titulo">🛡️ GARANTÍA</div>
-            <div class="recibo-linea"><span class="recibo-linea-label">Dinero:</span><span>Bs. ${datos.garantiaDinero || '0'}</span></div>
-            ${datos.garantiaObjeto ? `<div class="recibo-linea"><span class="recibo-linea-label">Objeto:</span><span>${datos.garantiaObjeto}</span></div>` : ''}
+        <div class="recibo-garantia">
+            <div class="garantia-label">Garantía</div>
+            <div class="garantia-valor">Bs. ${datos.garantiaDinero || '0'}${datos.garantiaObjeto ? ' + ' + datos.garantiaObjeto : ''}</div>
         </div>
         
         <div class="recibo-total">
-            <div class="recibo-total-label">TOTAL</div>
-            <div class="recibo-total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
+            <div class="total-label">Total</div>
+            <div class="total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
         </div>
         
         <div class="recibo-firma">
-            <div class="recibo-firma-titulo">FIRMA DEL CLIENTE</div>
-            <div class="recibo-firma-linea"></div>
-            <div class="recibo-firma-nombre">${datos.nombre}</div>
-            <div class="recibo-firma-legal">Acepto las condiciones de alquiler. Me comprometo a devolver el disfraz en la fecha acordada y en buen estado. En caso de daño o pérdida, asumo la responsabilidad del costo total.</div>
+            <div class="firma-linea"></div>
+            <div class="firma-texto">Firma del Cliente</div>
+        </div>
+        
+        <div class="recibo-condiciones">
+            Me comprometo a devolver el disfraz en la fecha acordada y en buen estado. En caso de daño o pérdida, asumo el costo total de reposición. La garantía será devuelta al entregar el disfraz en buenas condiciones.
         </div>
         
         <div class="recibo-footer">
-            <div class="recibo-gracias">¡Gracias!</div>
-            <div class="recibo-numero">N° ${datos.numeroRecibo}</div>
+            <div class="footer-gracias">¡¡GRACIAS POR SU PREFERENCIA!!</div>
+            <div class="footer-fecha">${fechaFormateada} • ${horaFormateada}</div>
         </div>
     `;
     
