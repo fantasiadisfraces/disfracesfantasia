@@ -568,7 +568,7 @@ function mostrarRecibo(datos) {
         </div>
         
         <div class="recibo-total">
-            <div class="total-label">Total</div>
+            <div class="total-label">ALQUILER</div>
             <div class="total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
         </div>
         
