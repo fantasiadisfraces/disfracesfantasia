@@ -1,450 +1,870 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disfraces Fantasía - Alquiler de Disfraces</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Google APIs -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
-</head>
-<body>
-    <!-- Header -->
-    <header>
-        <nav>
-            <div class="logo">
-                <img src="logo-tienda.jpg" alt="Disfraces Fantasía" class="logo-img">
-                <span>Disfraces Fantasía</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#inicio">Inicio</a></li>
-                <li><a href="#catalogo">Catálogo</a></li>
-                <li><a href="#precios">Precios</a></li>
-                <li><a href="#redes">Contacto</a></li>
-                <li><a href="#" id="btn-clientes" class="nav-clientes">👥 Clientes</a></li>
-            </ul>
-        </nav>
-    </header>
+// ========================================
+// CONFIGURACIÓN DE GOOGLE SHEETS API
+// Lee desde config.js
+// ========================================
+const CLIENT_ID = CONFIG.CLIENT_ID;
+const API_KEY = CONFIG.API_KEY;
+const SPREADSHEET_ID = CONFIG.GOOGLE_SHEET_ID;
+const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
+const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email';
 
-    <!-- Hero Section -->
-    <section class="hero" id="inicio">
-        <h1>¡Vive tu Personaje Favorito!</h1>
-        <p>Alquila el disfraz perfecto para cualquier ocasión</p>
-        <a href="#catalogo" class="cta-button">Ver Disfraces</a>
-    </section>
+// Variables de autenticación
+let tokenClient;
+let gapiInited = false;
+let gisInited = false;
+let spreadsheetId = SPREADSHEET_ID;
+let emailUsuario = ''; // Email del trabajador que inició sesión
 
-    <!-- Servicios -->
-    <section id="servicios">
-        <h2>Nuestros Servicios</h2>
-        <div class="servicios-grid">
-            <div class="servicio-card">
-                <div class="servicio-icon">🎪</div>
-                <h3>Alquiler por Días</h3>
-                <p>Renta tu disfraz por 1, 3 o más días según tus necesidades</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">✨</div>
-                <h3>Amplio Catálogo</h3>
-                <p>Más de 200 disfraces para todas las edades y ocasiones</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">👔</div>
-                <h3>Disfraces Limpiados</h3>
-                <p>Todos nuestros disfraces se entregan lavados y desinfectados</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">🎁</div>
-                <h3>Accesorios Incluidos</h3>
-                <p>Complementos y accesorios para completar tu look</p>
-            </div>
-        </div>
-    </section>
+// ========================================
+// VARIABLES GLOBALES
+// ========================================
+let usuarioLogueado = false;
+let registroSeleccionado = null;
+let ultimoRegistro = null;
+let usuarioGoogle = null;
 
-    <!-- Catálogo -->
-    <section id="catalogo">
-        <h2>Catálogo de Disfraces</h2>
-        <div class="catalogo-grid">
-            <div class="disfraz-card">
-                <div class="disfraz-img">🦸‍♂️</div>
-                <div class="disfraz-info">
-                    <h3>Superhéroes</h3>
-                    <p>Spider-Man, Batman, Superman, Wonder Woman y más</p>
-                    <p class="precio">Desde Bs. 50/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">👸</div>
-                <div class="disfraz-info">
-                    <h3>Princesas</h3>
-                    <p>Elsa, Cenicienta, Blanca Nieves, Bella y más</p>
-                    <p class="precio">Desde Bs. 45/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🧟</div>
-                <div class="disfraz-info">
-                    <h3>Terror</h3>
-                    <p>Zombies, vampiros, brujas y criaturas espeluznantes</p>
-                    <p class="precio">Desde Bs. 40/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🤡</div>
-                <div class="disfraz-info">
-                    <h3>Personajes</h3>
-                    <p>Payasos, mimos, animales y mucho más</p>
-                    <p class="precio">Desde Bs. 35/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🏴‍☠️</div>
-                <div class="disfraz-info">
-                    <h3>Piratas</h3>
-                    <p>Capitanes piratas, bucaneros y corsarios</p>
-                    <p class="precio">Desde Bs. 40/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🎅</div>
-                <div class="disfraz-info">
-                    <h3>Navideños</h3>
-                    <p>Santa Claus, elfos, renos y más</p>
-                    <p class="precio">Desde Bs. 45/día</p>
-                </div>
-            </div>
-        </div>
-    </section>
+// ========================================
+// INICIALIZACIÓN DE GOOGLE API
+// ========================================
+function gapiLoaded() {
+    gapi.load('client', initializeGapiClient);
+}
 
-    <!-- Precios -->
-    <section id="precios">
-        <h2>Planes de Alquiler</h2>
-        <div class="precios-container">
-            <p style="font-size: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 1;">💰 Solo Alquilamos - No Vendemos</p>
-            <div class="precios-grid">
-                <div class="precio-item">
-                    <h3>1 Día</h3>
-                    <p>Perfecto para eventos cortos</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 35</p>
-                </div>
-                <div class="precio-item">
-                    <h3>3 Días</h3>
-                    <p>Ideal para fines de semana</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 80</p>
-                </div>
-                <div class="precio-item">
-                    <h3>Semanal</h3>
-                    <p>Para festividades largas</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 150</p>
-                </div>
-            </div>
-            <p style="margin-top: 2rem; font-size: 0.9rem; position: relative; z-index: 1;">* Depósito reembolsable requerido | Descuentos por grupos</p>
-        </div>
-    </section>
+async function initializeGapiClient() {
+    try {
+        await gapi.client.init({
+            apiKey: API_KEY,
+            discoveryDocs: [DISCOVERY_DOC],
+        });
+        gapiInited = true;
+        console.log('✅ Google API inicializada');
+        checkReady();
+    } catch (error) {
+        console.error('Error inicializando GAPI:', error);
+    }
+}
 
-    <!-- Contacto -->
-    <section id="contacto">
-        <h2>Contáctanos</h2>
-        <div class="contacto-grid">
-            <div class="contacto-card mapa-card">
-                <div class="contacto-icon">
-                    <img src="ubicacion-logo.png" alt="Ubicación" style="width: 60px; height: 60px;">
-                </div>
-                <h3>Ubicación</h3>
-                <p>Calle Ayacucho<br>Entre Tejerina y Tarapacá<br>Oruro, Bolivia</p>
-                <div class="mapa-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-                <a href="https://maps.app.goo.gl/bgaBBqzaaxBz6M4f8" class="btn-mapa" target="_blank">
-                    📍 Abrir en Google Maps
-                </a>
-            </div>
-            <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="telefono-logo.webp" alt="Teléfono" style="width: 60px; height: 60px;">
-                </div>
-                <h3>Teléfono / Celular</h3>
-                <p><a href="tel:+59176133121">+591 76133121</a></p>
-            </div>
-            <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="correo-logo.png" alt="Email" style="width: 60px; height: 60px;">
-                </div>
-                <h3>Email</h3>
-                <p><a href="mailto:info@disfracesfantasia.com">info@disfracesfantasia.com</a></p>
-            </div>
-            <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="reloj-logo.png" alt="Horario" style="width: 60px; height: 60px;">
-                </div>
-                <h3>Horario</h3>
-                <p>Lunes a Sábado<br>9:00 AM - 7:00 PM</p>
-            </div>
-        </div>
+function gisLoaded() {
+    tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: handleTokenResponse,
+    });
+    gisInited = true;
+    console.log('✅ Google Identity Services cargado');
+    checkReady();
+}
 
-        <h2 style="margin-top: 4rem;" id="redes">Síguenos en Redes</h2>
-        <div class="redes-sociales">
-            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank">
-                <img src="facebook-logo.png" alt="Facebook">
-            </a>
-            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank">
-                <img src="instagram-logo.png" alt="Instagram">
-            </a>
-            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank">
-                <img src="whatsapp-logo.png" alt="WhatsApp">
-            </a>
-            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank">
-                <img src="tiktok-logo.png" alt="TikTok">
-            </a>
-        </div>
-    </section>
+function checkReady() {
+    if (gapiInited && gisInited) {
+        console.log('🎭 Sistema listo para autenticación');
+    }
+}
 
-    <!-- Modal de Login con Google -->
-    <div id="modal-login" class="modal">
-        <div class="modal-content modal-login-content">
-            <span class="close-modal">&times;</span>
-            <div class="login-header">
-                <div class="login-icon">🔐</div>
-                <h2>Acceso al Sistema</h2>
-                <p>Inicia sesión con tu cuenta de Google para acceder al sistema de clientes</p>
-            </div>
-            <div class="google-login-container">
-                <button id="btn-google-login" class="btn-google">
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Iniciar sesión con Google
-                </button>
-                <p class="login-hint">Solo personal autorizado de Disfraces Fantasía</p>
-            </div>
-        </div>
-    </div>
+function handleTokenResponse(resp) {
+    if (resp.error !== undefined) {
+        console.error('Error de autenticación:', resp);
+        alert('Error al iniciar sesión con Google');
+        return;
+    }
+    usuarioGoogle = true;
+    console.log('✅ Autenticado con Google');
+    console.log('📊 Conectando a hoja ID:', SPREADSHEET_ID);
+    
+    // Obtener email del usuario
+    obtenerEmailUsuario();
+}
 
-    <!-- Modal de Gestión de Clientes -->
-    <div id="modal-clientes" class="modal">
-        <div class="modal-content modal-clientes-content">
-            <div class="modal-header-clientes">
-                <h2>👥 Gestión de Clientes</h2>
-                <div class="header-actions">
-                    <span id="usuario-logueado"></span>
-                    <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
-                    <span class="close-modal">&times;</span>
-                </div>
-            </div>
+async function obtenerEmailUsuario() {
+    try {
+        const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+            headers: {
+                'Authorization': 'Bearer ' + gapi.client.getToken().access_token
+            }
+        });
+        const userInfo = await response.json();
+        emailUsuario = userInfo.email;
+        console.log('👤 Usuario:', emailUsuario);
+        document.getElementById('usuario-logueado').textContent = '👤 ' + emailUsuario;
+        verificarHojas();
+    } catch (error) {
+        console.error('Error obteniendo email:', error);
+        emailUsuario = 'desconocido';
+        verificarHojas();
+    }
+}
+
+// ========================================
+// VERIFICAR Y CREAR HOJAS
+// ========================================
+async function verificarHojas() {
+    try {
+        const response = await gapi.client.sheets.spreadsheets.get({
+            spreadsheetId: spreadsheetId
+        });
+        
+        const hojas = response.result.sheets.map(s => s.properties.title);
+        console.log('Hojas existentes:', hojas);
+        
+        // Crear hoja Alquileres si no existe
+        if (!hojas.includes('Alquileres')) {
+            await crearHojaAlquileres();
+        }
+        
+        // Crear hoja ClientesHabituales si no existe
+        if (!hojas.includes('ClientesHabituales')) {
+            await crearHojaClientes();
+        }
+        
+        // Mostrar modal de clientes
+        modalLogin.classList.remove('active');
+        modalClientes.classList.add('active');
+        // Mantener el email del usuario que inició sesión
+        document.getElementById('usuario-logueado').textContent = '👤 ' + emailUsuario;
+        usuarioLogueado = true;
+        
+    } catch (error) {
+        console.error('Error verificando hojas:', error);
+        alert('Error accediendo a la hoja de cálculo: ' + error.message);
+    }
+}
+
+async function crearHojaAlquileres() {
+    await gapi.client.sheets.spreadsheets.batchUpdate({
+        spreadsheetId: spreadsheetId,
+        resource: {
+            requests: [{
+                addSheet: {
+                    properties: { title: 'Alquileres' }
+                }
+            }]
+        }
+    });
+    
+    // Agregar encabezados
+    await gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: spreadsheetId,
+        range: 'Alquileres!A1:S1',
+        valueInputOption: 'RAW',
+        resource: {
+            values: [['Nombre', 'Cedula', 'Celular', 'Disfraz', 'PrecioAlquiler', 'FechaAlquiler', 'FechaDevolucion', 'Condiciones', 'GarantiaDinero', 'GarantiaObjeto', 'DescripcionGarantia', 'Observaciones', 'Estado', 'FechaRegistro', 'CondicionesDevolucion', 'NotasDevolucion', 'FechaDevolucionReal', 'NumeroRecibo', 'RegistradoPor']]
+        }
+    });
+    console.log('✅ Hoja Alquileres creada');
+}
+
+async function crearHojaClientes() {
+    await gapi.client.sheets.spreadsheets.batchUpdate({
+        spreadsheetId: spreadsheetId,
+        resource: {
+            requests: [{
+                addSheet: {
+                    properties: { title: 'ClientesHabituales' }
+                }
+            }]
+        }
+    });
+    
+    await gapi.client.sheets.spreadsheets.values.update({
+        spreadsheetId: spreadsheetId,
+        range: 'ClientesHabituales!A1:E1',
+        valueInputOption: 'RAW',
+        resource: {
+            values: [['Nombre', 'Cedula', 'Celular', 'TotalAlquileres', 'UltimoAlquiler']]
+        }
+    });
+    console.log('✅ Hoja ClientesHabituales creada');
+}
+
+// ========================================
+// SMOOTH SCROLL
+// ========================================
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#') {
+            e.preventDefault();
+            const target = document.querySelector(href);
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    });
+});
+
+// ========================================
+// ANIMACIÓN AL SCROLL
+// ========================================
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+});
+
+document.querySelectorAll('.servicio-card, .disfraz-card, .contacto-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s, transform 0.6s';
+    observer.observe(card);
+});
+
+// ========================================
+// SISTEMA DE MODALES
+// ========================================
+const modalLogin = document.getElementById('modal-login');
+const modalClientes = document.getElementById('modal-clientes');
+const modalRecibo = document.getElementById('modal-recibo');
+const btnClientes = document.getElementById('btn-clientes');
+
+btnClientes.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (usuarioLogueado && usuarioGoogle) {
+        modalClientes.classList.add('active');
+    } else {
+        modalLogin.classList.add('active');
+    }
+});
+
+document.querySelectorAll('.close-modal').forEach(btn => {
+    btn.addEventListener('click', () => {
+        modalLogin.classList.remove('active');
+        modalClientes.classList.remove('active');
+    });
+});
+
+document.getElementById('btn-cerrar-recibo').addEventListener('click', () => {
+    modalRecibo.classList.remove('active');
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === modalLogin) modalLogin.classList.remove('active');
+    if (e.target === modalClientes) modalClientes.classList.remove('active');
+    if (e.target === modalRecibo) modalRecibo.classList.remove('active');
+});
+
+// ========================================
+// LOGIN CON GOOGLE
+// ========================================
+document.getElementById('btn-google-login').addEventListener('click', () => {
+    if (!gapiInited || !gisInited) {
+        alert('Espera un momento, las APIs de Google están cargando...');
+        return;
+    }
+    
+    if (gapi.client.getToken() === null) {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+    } else {
+        tokenClient.requestAccessToken({ prompt: '' });
+    }
+});
+
+document.getElementById('btn-logout').addEventListener('click', () => {
+    const token = gapi.client.getToken();
+    if (token !== null) {
+        google.accounts.oauth2.revoke(token.access_token);
+        gapi.client.setToken('');
+    }
+    usuarioLogueado = false;
+    usuarioGoogle = false;
+    modalClientes.classList.remove('active');
+});
+
+// ========================================
+// SISTEMA DE TABS
+// ========================================
+document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    });
+});
+
+// ========================================
+// AUTOCOMPLETADO CLIENTES HABITUALES
+// ========================================
+let busquedaTimeout = null;
+document.getElementById('cedula').addEventListener('input', function() {
+    clearTimeout(busquedaTimeout);
+    const cedula = this.value.trim();
+    
+    if (cedula.length >= 5) {
+        document.getElementById('cedula-loader').style.display = 'inline';
+        busquedaTimeout = setTimeout(() => buscarClienteHabitual(cedula), 800);
+    } else {
+        document.getElementById('cliente-habitual-alert').style.display = 'none';
+    }
+});
+
+async function buscarClienteHabitual(cedula) {
+    try {
+        // Buscar en ClientesHabituales
+        const responseClientes = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'ClientesHabituales!A:E'
+        });
+        
+        // Buscar alquileres pendientes en Alquileres
+        const responseAlquileres = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Alquileres!A:M'
+        });
+        
+        document.getElementById('cedula-loader').style.display = 'none';
+        
+        const rowsClientes = responseClientes.result.values || [];
+        const rowsAlquileres = responseAlquileres.result.values || [];
+        
+        // Buscar alquileres pendientes (estado = "Alquilado") de este cliente
+        const alquileresPendientes = [];
+        for (let i = 1; i < rowsAlquileres.length; i++) {
+            const row = rowsAlquileres[i];
+            if (row[1] && row[1].toString() === cedula && row[12] === 'Alquilado') {
+                alquileresPendientes.push({
+                    disfraz: row[3],
+                    fechaDevolucion: row[6]
+                });
+            }
+        }
+        
+        // Buscar datos del cliente habitual
+        let clienteEncontrado = false;
+        for (let i = 1; i < rowsClientes.length; i++) {
+            if (rowsClientes[i][1] && rowsClientes[i][1].toString() === cedula) {
+                document.getElementById('nombre-cliente').value = rowsClientes[i][0] || '';
+                document.getElementById('celular').value = rowsClientes[i][2] || '';
+                
+                const totalAlquileres = rowsClientes[i][3] || 0;
+                
+                // Mostrar alerta de cliente habitual
+                let alertHTML = '<span class="alert-icon">⭐</span>';
+                alertHTML += '<span class="alert-text">Cliente frecuente - <strong class="alert-alquileres">' + totalAlquileres + ' alquileres</strong></span>';
+                
+                document.getElementById('cliente-habitual-alert').innerHTML = alertHTML;
+                document.getElementById('cliente-habitual-alert').style.display = 'flex';
+                document.getElementById('cliente-habitual-alert').className = 'cliente-habitual-alert';
+                
+                clienteEncontrado = true;
+                break;
+            }
+        }
+        
+        // Mostrar alerta de deudas pendientes si hay
+        if (alquileresPendientes.length > 0) {
+            let deudaHTML = '<div class="alerta-deuda">';
+            deudaHTML += '<span class="deuda-icon">⚠️</span>';
+            deudaHTML += '<span class="deuda-titulo">¡ATENCIÓN! Cliente con ' + alquileresPendientes.length + ' disfraz(es) sin devolver:</span>';
+            deudaHTML += '<ul class="deuda-lista">';
+            alquileresPendientes.forEach(a => {
+                deudaHTML += '<li>🎭 <strong>' + a.disfraz + '</strong> - Debía devolver: ' + a.fechaDevolucion + '</li>';
+            });
+            deudaHTML += '</ul>';
+            deudaHTML += '</div>';
             
-            <!-- Tabs -->
-            <div class="tabs-container">
-                <button class="tab-btn active" data-tab="registro">📝 Nuevo</button>
-                <button class="tab-btn" data-tab="buscar">🔍 Buscar</button>
-                <button class="tab-btn" data-tab="historial">📋 Historial</button>
-                <button class="tab-btn" data-tab="clientes-habituales">⭐ Habituales</button>
-            </div>
+            document.getElementById('alerta-deudas').innerHTML = deudaHTML;
+            document.getElementById('alerta-deudas').style.display = 'block';
+        } else {
+            document.getElementById('alerta-deudas').style.display = 'none';
+            document.getElementById('alerta-deudas').innerHTML = '';
+        }
+        
+        if (!clienteEncontrado && alquileresPendientes.length === 0) {
+            document.getElementById('cliente-habitual-alert').style.display = 'none';
+        }
+        
+    } catch (e) {
+        document.getElementById('cedula-loader').style.display = 'none';
+        console.log('Error buscando cliente:', e);
+    }
+}
 
-            <!-- Tab: Nuevo Registro -->
-            <div id="tab-registro" class="tab-content active">
-                <form id="form-registro">
-                    <!-- Indicador de cliente habitual -->
-                    <div id="cliente-habitual-alert" class="cliente-habitual-alert" style="display: none;">
-                        <span class="alert-icon">⭐</span>
-                        <span class="alert-text">¡Cliente habitual detectado! Datos cargados.</span>
-                        <span class="alert-alquileres"></span>
-                    </div>
-                    
-                    <!-- Alerta de deudas pendientes -->
-                    <div id="alerta-deudas" style="display: none;"></div>
+// ========================================
+// REGISTRO DE CLIENTES
+// ========================================
+const formRegistro = document.getElementById('form-registro');
+const mensajeRegistro = document.getElementById('mensaje-registro');
+const btnImprimirRecibo = document.getElementById('btn-imprimir-recibo');
 
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cedula">🪪 Cédula de Identidad</label>
-                            <div class="input-with-loader">
-                                <input type="text" id="cedula" placeholder="Ej: 12345678 LP" required>
-                                <span id="cedula-loader" class="input-loader" style="display: none;">🔄</span>
-                            </div>
-                            <small class="input-hint">Ingresa CI para autocompletar si es cliente habitual</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre-cliente">👤 Nombre Completo</label>
-                            <input type="text" id="nombre-cliente" placeholder="Ej: Juan Pérez García" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="celular">📱 Celular</label>
-                            <input type="tel" id="celular" placeholder="Ej: 76133121" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="disfraz">🎭 Disfraz que Lleva</label>
-                            <input type="text" id="disfraz" placeholder="Ej: Spider-Man adulto talla M" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="precio-alquiler">💲 Precio Alquiler (Bs.)</label>
-                            <input type="number" id="precio-alquiler" placeholder="Ej: 50" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="condiciones">📋 Condiciones del Disfraz</label>
-                            <select id="condiciones" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Excelente">✨ Excelente - Como nuevo</option>
-                                <option value="Bueno">👍 Bueno - Pequeños detalles</option>
-                                <option value="Regular">⚠️ Regular - Desgaste visible</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fecha-alquiler">📅 Fecha Alquiler</label>
-                            <input type="date" id="fecha-alquiler" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha-devolucion">📅 Fecha Devolución</label>
-                            <input type="date" id="fecha-devolucion" required>
-                        </div>
-                    </div>
+formRegistro.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const btnRegistrar = formRegistro.querySelector('.btn-registrar');
+    const btnText = btnRegistrar.querySelector('.btn-text');
+    const btnLoading = btnRegistrar.querySelector('.btn-loading');
+    
+    btnText.style.display = 'none';
+    btnLoading.style.display = 'inline';
+    btnRegistrar.disabled = true;
+    
+    const numRecibo = generarNumeroRecibo();
+    const fechaRegistro = new Date().toLocaleString('es-BO');
+    
+    const datos = {
+        nombre: document.getElementById('nombre-cliente').value,
+        cedula: document.getElementById('cedula').value,
+        celular: document.getElementById('celular').value,
+        disfraz: document.getElementById('disfraz').value,
+        precioAlquiler: document.getElementById('precio-alquiler').value || '0',
+        fechaAlquiler: document.getElementById('fecha-alquiler').value,
+        fechaDevolucion: document.getElementById('fecha-devolucion').value,
+        condiciones: document.getElementById('condiciones').value,
+        garantiaDinero: document.getElementById('garantia-dinero').value || '0',
+        garantiaObjeto: document.getElementById('garantia-objeto').value || '',
+        descripcionGarantia: document.getElementById('descripcion-garantia').value || '',
+        observaciones: document.getElementById('observaciones').value || '',
+        estado: 'Alquilado',
+        fechaRegistro: fechaRegistro,
+        numeroRecibo: numRecibo
+    };
+    
+    try {
+        // Agregar fila a Alquileres (incluye email del trabajador)
+        await gapi.client.sheets.spreadsheets.values.append({
+            spreadsheetId: spreadsheetId,
+            range: 'Alquileres!A:S',
+            valueInputOption: 'RAW',
+            insertDataOption: 'INSERT_ROWS',
+            resource: {
+                values: [[
+                    datos.nombre,
+                    datos.cedula,
+                    datos.celular,
+                    datos.disfraz,
+                    datos.precioAlquiler,
+                    datos.fechaAlquiler,
+                    datos.fechaDevolucion,
+                    datos.condiciones,
+                    datos.garantiaDinero,
+                    datos.garantiaObjeto,
+                    datos.descripcionGarantia,
+                    datos.observaciones,
+                    datos.estado,
+                    datos.fechaRegistro,
+                    '', '', '', datos.numeroRecibo,
+                    emailUsuario  // Email del trabajador que registró
+                ]]
+            }
+        });
+        
+        // Actualizar cliente habitual
+        await actualizarClienteHabitual(datos);
+        
+        ultimoRegistro = datos;
+        mostrarMensaje(mensajeRegistro, '✅ ¡Registro guardado exitosamente en Google Sheets!', 'exito');
+        btnImprimirRecibo.style.display = 'inline-block';
+        
+    } catch (error) {
+        console.error('Error:', error);
+        mostrarMensaje(mensajeRegistro, '❌ Error: ' + error.message, 'error');
+    }
+    
+    btnText.style.display = 'inline';
+    btnLoading.style.display = 'none';
+    btnRegistrar.disabled = false;
+});
 
-                    <!-- Sección de Garantía -->
-                    <div class="garantia-section">
-                        <h3 class="section-title">🛡️ Garantía del Alquiler</h3>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="garantia-dinero">💵 Garantía en Dinero (Bs.)</label>
-                                <input type="number" id="garantia-dinero" placeholder="Ej: 100" min="0" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="garantia-objeto">📦 Garantía en Objeto</label>
-                                <input type="text" id="garantia-objeto" placeholder="Ej: Celular, CI original, etc.">
-                            </div>
-                        </div>
-                        <div class="form-group full-width">
-                            <label for="descripcion-garantia">📝 Descripción del Objeto en Garantía</label>
-                            <textarea id="descripcion-garantia" rows="2" placeholder="Marca, modelo, color, estado del objeto..."></textarea>
-                        </div>
-                    </div>
+async function actualizarClienteHabitual(datos) {
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'ClientesHabituales!A:E'
+        });
+        
+        const rows = response.result.values || [];
+        let filaEncontrada = -1;
+        
+        for (let i = 1; i < rows.length; i++) {
+            if (rows[i][1] && rows[i][1].toString() === datos.cedula) {
+                filaEncontrada = i + 1;
+                break;
+            }
+        }
+        
+        if (filaEncontrada > 0) {
+            // Actualizar existente
+            const totalActual = parseInt(rows[filaEncontrada - 1][3]) || 0;
+            await gapi.client.sheets.spreadsheets.values.update({
+                spreadsheetId: spreadsheetId,
+                range: `ClientesHabituales!A${filaEncontrada}:E${filaEncontrada}`,
+                valueInputOption: 'RAW',
+                resource: {
+                    values: [[datos.nombre, datos.cedula, datos.celular, totalActual + 1, datos.fechaAlquiler]]
+                }
+            });
+        } else {
+            // Crear nuevo
+            await gapi.client.sheets.spreadsheets.values.append({
+                spreadsheetId: spreadsheetId,
+                range: 'ClientesHabituales!A:E',
+                valueInputOption: 'RAW',
+                insertDataOption: 'INSERT_ROWS',
+                resource: {
+                    values: [[datos.nombre, datos.cedula, datos.celular, 1, datos.fechaAlquiler]]
+                }
+            });
+        }
+    } catch (e) {
+        console.log('Error actualizando cliente habitual:', e);
+    }
+}
 
-                    <div class="form-group full-width">
-                        <label for="observaciones">📝 Observaciones Generales</label>
-                        <textarea id="observaciones" rows="2" placeholder="Accesorios incluidos, acuerdos especiales..."></textarea>
-                    </div>
+formRegistro.addEventListener('reset', () => {
+    btnImprimirRecibo.style.display = 'none';
+    document.getElementById('cliente-habitual-alert').style.display = 'none';
+    mensajeRegistro.className = 'mensaje-resultado';
+    setTimeout(() => {
+        document.getElementById('fecha-alquiler').value = new Date().toISOString().split('T')[0];
+    }, 100);
+});
 
-                    <div class="form-actions">
-                        <button type="submit" class="btn-registrar">
-                            <span class="btn-text">✅ Registrar Alquiler</span>
-                            <span class="btn-loading" style="display: none;">⏳ Guardando...</span>
-                        </button>
-                        <button type="button" id="btn-imprimir-recibo" class="btn-imprimir" style="display: none;">
-                            🖨️ Imprimir Recibo
-                        </button>
-                        <button type="reset" class="btn-limpiar">🗑️ Limpiar</button>
-                    </div>
-                </form>
-                <div id="mensaje-registro" class="mensaje-resultado"></div>
-            </div>
+// ========================================
+// IMPRIMIR RECIBO
+// ========================================
+btnImprimirRecibo.addEventListener('click', () => mostrarRecibo(ultimoRegistro));
+document.getElementById('btn-print-recibo').addEventListener('click', () => window.print());
 
-            <!-- Tab: Buscar Cliente -->
-            <div id="tab-buscar" class="tab-content">
-                <div class="busqueda-container">
-                    <div class="form-group busqueda-grupo">
-                        <label for="buscar-input">🔍 Buscar por Nombre o Cédula</label>
-                        <div class="busqueda-input-wrapper">
-                            <input type="text" id="buscar-input" placeholder="Escribe nombre o cédula...">
-                            <button id="btn-buscar" class="btn-buscar">Buscar</button>
-                        </div>
-                    </div>
-                </div>
-                <div id="resultados-busqueda" class="resultados-container">
-                    <p class="placeholder-text">Ingresa un nombre o cédula para buscar</p>
-                </div>
-
-                <!-- Modal devolución -->
-                <div id="modal-devolucion" class="modal-inline" style="display: none;">
-                    <div class="devolucion-content">
-                        <h3>📦 Registrar Devolución</h3>
-                        <p id="info-devolucion"></p>
-                        <div class="form-group">
-                            <label for="condiciones-devolucion">Estado del disfraz:</label>
-                            <select id="condiciones-devolucion" required>
-                                <option value="Excelente">✨ Excelente - Sin daños</option>
-                                <option value="Bueno">👍 Bueno - Uso normal</option>
-                                <option value="Dañado">⚠️ Dañado - Requiere reparación</option>
-                                <option value="Muy Dañado">❌ Muy Dañado</option>
-                            </select>
-                        </div>
-                        <div class="garantia-devolucion-info" id="garantia-devolucion-info">
-                            <h4>🛡️ Garantía a devolver:</h4>
-                            <p id="garantia-devolver-texto"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="notas-devolucion">Notas:</label>
-                            <textarea id="notas-devolucion" rows="2" placeholder="Observaciones..."></textarea>
-                        </div>
-                        <div class="devolucion-actions">
-                            <button id="btn-confirmar-devolucion" class="btn-confirmar">✅ Confirmar</button>
-                            <button id="btn-cancelar-devolucion" class="btn-cancelar">❌ Cancelar</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab: Historial -->
-            <div id="tab-historial" class="tab-content">
-                <div class="historial-controles">
-                    <button id="btn-cargar-historial" class="btn-cargar">📥 Cargar Registros</button>
-                    <select id="filtro-estado">
-                        <option value="todos">Todos</option>
-                        <option value="Alquilado">🔴 Alquilados</option>
-                        <option value="Devuelto">🟢 Devueltos</option>
-                    </select>
-                </div>
-                <div id="tabla-historial" class="tabla-container">
-                    <p class="placeholder-text">Haz clic en "Cargar Registros"</p>
-                </div>
-            </div>
-
-            <!-- Tab: Clientes Habituales -->
-            <div id="tab-clientes-habituales" class="tab-content">
-                <div class="clientes-habituales-header">
-                    <h3>⭐ Clientes Habituales</h3>
-                    <p>Sus datos se cargan automáticamente al ingresar su CI en nuevo registro.</p>
-                </div>
-                <div class="historial-controles">
-                    <button id="btn-cargar-clientes" class="btn-cargar">📥 Cargar Clientes</button>
-                </div>
-                <div id="tabla-clientes-habituales" class="tabla-container">
-                    <p class="placeholder-text">Haz clic en "Cargar Clientes"</p>
-                </div>
-            </div>
+function mostrarRecibo(datos) {
+    if (!datos) return;
+    
+    const contenido = document.getElementById('recibo-contenido');
+    
+    contenido.innerHTML = `
+        <div class="recibo-header">
+            <div class="recibo-logo">🎭</div>
+            <div class="recibo-titulo">DISFRACES FANTASÍA</div>
+            <div class="recibo-subtitulo">Alquiler de Disfraces</div>
+            <div class="recibo-subtitulo">Calle Ayacucho, Oruro</div>
+            <div class="recibo-subtitulo">Tel: 76133121</div>
         </div>
-    </div>
-
-    <!-- Modal de Recibo para Imprimir -->
-    <div id="modal-recibo" class="modal">
-        <div class="modal-content modal-recibo-content">
-            <div class="recibo-no-print">
-                <button id="btn-cerrar-recibo" class="btn-cerrar-recibo">✕ Cerrar</button>
-                <button id="btn-print-recibo" class="btn-print-recibo">🖨️ Imprimir</button>
-            </div>
-            <div id="recibo-contenido" class="recibo-contenido">
-                <!-- Contenido del recibo generado dinámicamente -->
-            </div>
+        
+        <div class="recibo-info">
+            <div class="recibo-linea"><span class="recibo-linea-label">Fecha:</span><span>${datos.fechaAlquiler}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Cliente:</span><span>${datos.nombre}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">CI:</span><span>${datos.cedula}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Cel:</span><span>${datos.celular}</span></div>
         </div>
-    </div>
+        
+        <div class="recibo-seccion">
+            <div class="recibo-seccion-titulo">🎭 DISFRAZ</div>
+            <div class="recibo-linea"><span>${datos.disfraz}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Estado:</span><span>${datos.condiciones}</span></div>
+        </div>
+        
+        <div class="recibo-seccion">
+            <div class="recibo-seccion-titulo">📅 FECHAS</div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Alquiler:</span><span>${datos.fechaAlquiler}</span></div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Devolución:</span><span>${datos.fechaDevolucion}</span></div>
+        </div>
+        
+        <div class="recibo-seccion">
+            <div class="recibo-seccion-titulo">🛡️ GARANTÍA</div>
+            <div class="recibo-linea"><span class="recibo-linea-label">Dinero:</span><span>Bs. ${datos.garantiaDinero || '0'}</span></div>
+            ${datos.garantiaObjeto ? `<div class="recibo-linea"><span class="recibo-linea-label">Objeto:</span><span>${datos.garantiaObjeto}</span></div>` : ''}
+        </div>
+        
+        <div class="recibo-total">
+            <div class="recibo-total-label">TOTAL</div>
+            <div class="recibo-total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
+        </div>
+        
+        <div class="recibo-firma">
+            <div class="recibo-firma-titulo">FIRMA DEL CLIENTE</div>
+            <div class="recibo-firma-linea"></div>
+            <div class="recibo-firma-nombre">${datos.nombre}</div>
+            <div class="recibo-firma-legal">Acepto las condiciones de alquiler. Me comprometo a devolver el disfraz en la fecha acordada y en buen estado. En caso de daño o pérdida, asumo la responsabilidad del costo total.</div>
+        </div>
+        
+        <div class="recibo-footer">
+            <div class="recibo-gracias">¡Gracias!</div>
+            <div class="recibo-numero">N° ${datos.numeroRecibo}</div>
+        </div>
+    `;
+    
+    modalRecibo.classList.add('active');
+}
 
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 Disfraces Fantasía - Alquiler de Disfraces. Todos los derechos reservados.</p>
-        <p style="margin-top: 0.5rem;">Propietaria: Juvilia Espíndola Ugarte</p>
-        <p style="margin-top: 0.5rem;">🎭 ¡Tu evento merece el mejor disfraz!</p>
-    </footer>
+function generarNumeroRecibo() {
+    const f = new Date();
+    return 'DF' + f.getFullYear() + String(f.getMonth()+1).padStart(2,'0') + String(f.getDate()).padStart(2,'0') + '-' + String(f.getHours()).padStart(2,'0') + String(f.getMinutes()).padStart(2,'0') + String(f.getSeconds()).padStart(2,'0');
+}
 
-    <script src="config.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+// ========================================
+// BÚSQUEDA DE CLIENTES
+// ========================================
+document.getElementById('btn-buscar').addEventListener('click', buscarCliente);
+document.getElementById('buscar-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') buscarCliente();
+});
+
+async function buscarCliente() {
+    const termino = document.getElementById('buscar-input').value.trim().toLowerCase();
+    const resultados = document.getElementById('resultados-busqueda');
+    
+    if (!termino) {
+        resultados.innerHTML = '<p class="placeholder-text">Ingresa un nombre o cédula</p>';
+        return;
+    }
+    
+    resultados.innerHTML = '<div class="loading">Buscando...</div>';
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Alquileres!A:R'
+        });
+        
+        const rows = response.result.values || [];
+        const encontrados = [];
+        
+        for (let i = 1; i < rows.length; i++) {
+            const nombre = (rows[i][0] || '').toLowerCase();
+            const cedula = (rows[i][1] || '').toLowerCase();
+            
+            if (nombre.includes(termino) || cedula.includes(termino)) {
+                encontrados.push({
+                    fila: i + 1,
+                    nombre: rows[i][0],
+                    cedula: rows[i][1],
+                    celular: rows[i][2],
+                    disfraz: rows[i][3],
+                    precioAlquiler: rows[i][4],
+                    fechaAlquiler: rows[i][5],
+                    fechaDevolucion: rows[i][6],
+                    condiciones: rows[i][7],
+                    garantiaDinero: rows[i][8],
+                    garantiaObjeto: rows[i][9],
+                    descripcionGarantia: rows[i][10],
+                    observaciones: rows[i][11],
+                    estado: rows[i][12],
+                    numeroRecibo: rows[i][17]
+                });
+            }
+        }
+        
+        if (encontrados.length > 0) {
+            mostrarResultados(encontrados);
+        } else {
+            resultados.innerHTML = '<p class="placeholder-text">No se encontraron registros</p>';
+        }
+        
+    } catch (e) {
+        console.error('Error:', e);
+        resultados.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
+    }
+}
+
+function mostrarResultados(datos) {
+    let html = '';
+    
+    datos.forEach((r) => {
+        const esAlquilado = r.estado === 'Alquilado';
+        
+        html += `
+            <div class="resultado-card ${esAlquilado ? 'alquilado' : 'devuelto'}">
+                <div class="resultado-header">
+                    <span class="resultado-nombre">👤 ${r.nombre}</span>
+                    <span class="resultado-estado ${esAlquilado ? 'estado-alquilado' : 'estado-devuelto'}">
+                        ${esAlquilado ? '🔴 Alquilado' : '🟢 Devuelto'}
+                    </span>
+                </div>
+                <div class="resultado-info">
+                    <span><strong>CI:</strong> ${r.cedula}</span>
+                    <span><strong>Cel:</strong> ${r.celular}</span>
+                    <span><strong>Disfraz:</strong> ${r.disfraz}</span>
+                    <span><strong>Precio:</strong> Bs. ${r.precioAlquiler || '0'}</span>
+                    <span><strong>Alquiler:</strong> ${r.fechaAlquiler}</span>
+                    <span><strong>Devolución:</strong> ${r.fechaDevolucion}</span>
+                    <span><strong>Garantía $:</strong> Bs. ${r.garantiaDinero || '0'}</span>
+                    ${r.garantiaObjeto ? `<span><strong>Garantía Obj:</strong> ${r.garantiaObjeto}</span>` : ''}
+                </div>
+                <div class="resultado-actions">
+                    ${esAlquilado ? `<button class="btn-devolucion" onclick="iniciarDevolucion(${r.fila}, '${r.nombre}', '${r.disfraz}', '${r.garantiaDinero}', '${r.garantiaObjeto || ''}')">📦 Devolución</button>` : ''}
+                    <button class="btn-recibo-busqueda" onclick="mostrarRecibo({nombre:'${r.nombre}',cedula:'${r.cedula}',celular:'${r.celular}',disfraz:'${r.disfraz}',precioAlquiler:'${r.precioAlquiler}',fechaAlquiler:'${r.fechaAlquiler}',fechaDevolucion:'${r.fechaDevolucion}',condiciones:'${r.condiciones}',garantiaDinero:'${r.garantiaDinero}',garantiaObjeto:'${r.garantiaObjeto || ''}',descripcionGarantia:'${r.descripcionGarantia || ''}',numeroRecibo:'${r.numeroRecibo || ''}'})">🖨️ Recibo</button>
+                </div>
+            </div>
+        `;
+    });
+    
+    document.getElementById('resultados-busqueda').innerHTML = html;
+}
+
+// ========================================
+// DEVOLUCIÓN
+// ========================================
+function iniciarDevolucion(fila, nombre, disfraz, garantiaDinero, garantiaObjeto) {
+    registroSeleccionado = { fila, nombre, disfraz, garantiaDinero, garantiaObjeto };
+    
+    document.getElementById('info-devolucion').innerHTML = `<strong>Cliente:</strong> ${nombre}<br><strong>Disfraz:</strong> ${disfraz}`;
+    
+    let garantiaTexto = '';
+    if (garantiaDinero && parseFloat(garantiaDinero) > 0) garantiaTexto += `💵 Dinero: Bs. ${garantiaDinero}<br>`;
+    if (garantiaObjeto) garantiaTexto += `📦 Objeto: ${garantiaObjeto}`;
+    
+    document.getElementById('garantia-devolver-texto').innerHTML = garantiaTexto || 'Sin garantía';
+    document.getElementById('modal-devolucion').style.display = 'block';
+}
+
+document.getElementById('btn-cancelar-devolucion').addEventListener('click', () => {
+    document.getElementById('modal-devolucion').style.display = 'none';
+    registroSeleccionado = null;
+});
+
+document.getElementById('btn-confirmar-devolucion').addEventListener('click', async () => {
+    if (!registroSeleccionado) return;
+    
+    const btn = document.getElementById('btn-confirmar-devolucion');
+    btn.disabled = true;
+    btn.textContent = '⏳ Procesando...';
+    
+    try {
+        // Actualizar estado a Devuelto
+        await gapi.client.sheets.spreadsheets.values.update({
+            spreadsheetId: spreadsheetId,
+            range: `Alquileres!M${registroSeleccionado.fila}`,
+            valueInputOption: 'RAW',
+            resource: { values: [['Devuelto']] }
+        });
+        
+        // Guardar condiciones y notas de devolución
+        await gapi.client.sheets.spreadsheets.values.update({
+            spreadsheetId: spreadsheetId,
+            range: `Alquileres!O${registroSeleccionado.fila}:Q${registroSeleccionado.fila}`,
+            valueInputOption: 'RAW',
+            resource: { values: [[
+                document.getElementById('condiciones-devolucion').value,
+                document.getElementById('notas-devolucion').value,
+                new Date().toLocaleString('es-BO')
+            ]] }
+        });
+        
+        alert('✅ Devolución registrada.\n\n⚠️ DEVOLVER GARANTÍA:\n💵 Bs. ' + (registroSeleccionado.garantiaDinero || '0') + '\n📦 ' + (registroSeleccionado.garantiaObjeto || 'Ninguno'));
+        
+        document.getElementById('modal-devolucion').style.display = 'none';
+        document.getElementById('notas-devolucion').value = '';
+        buscarCliente();
+        
+    } catch (e) {
+        console.error('Error:', e);
+        alert('❌ Error: ' + e.message);
+    }
+    
+    btn.disabled = false;
+    btn.textContent = '✅ Confirmar';
+    registroSeleccionado = null;
+});
+
+// ========================================
+// HISTORIAL
+// ========================================
+document.getElementById('btn-cargar-historial').addEventListener('click', cargarHistorial);
+document.getElementById('filtro-estado').addEventListener('change', cargarHistorial);
+
+async function cargarHistorial() {
+    const tabla = document.getElementById('tabla-historial');
+    tabla.innerHTML = '<div class="loading">Cargando...</div>';
+    
+    const filtro = document.getElementById('filtro-estado').value;
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'Alquileres!A:R'
+        });
+        
+        const rows = response.result.values || [];
+        const datos = [];
+        
+        for (let i = 1; i < rows.length; i++) {
+            const estado = rows[i][12];
+            if (filtro === 'todos' || estado === filtro) {
+                datos.push({
+                    nombre: rows[i][0],
+                    cedula: rows[i][1],
+                    disfraz: rows[i][3],
+                    precioAlquiler: rows[i][4],
+                    garantiaDinero: rows[i][8],
+                    garantiaObjeto: rows[i][9],
+                    estado: rows[i][12]
+                });
+            }
+        }
+        
+        if (datos.length > 0) {
+            datos.reverse();
+            mostrarHistorial(datos);
+        } else {
+            tabla.innerHTML = '<p class="placeholder-text">No hay registros</p>';
+        }
+        
+    } catch (e) {
+        console.error('Error:', e);
+        tabla.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
+    }
+}
+
+function mostrarHistorial(datos) {
+    let html = `<table class="tabla-registros"><thead><tr><th>Nombre</th><th>CI</th><th>Disfraz</th><th>Precio</th><th>Garantía</th><th>Estado</th></tr></thead><tbody>`;
+    
+    datos.forEach(r => {
+        html += `<tr><td>${r.nombre}</td><td>${r.cedula}</td><td>${r.disfraz}</td><td>Bs. ${r.precioAlquiler || '0'}</td><td>Bs. ${r.garantiaDinero || '0'} ${r.garantiaObjeto ? '+ ' + r.garantiaObjeto : ''}</td><td><span class="resultado-estado ${r.estado === 'Alquilado' ? 'estado-alquilado' : 'estado-devuelto'}">${r.estado === 'Alquilado' ? '🔴' : '🟢'}</span></td></tr>`;
+    });
+    
+    html += '</tbody></table>';
+    document.getElementById('tabla-historial').innerHTML = html;
+}
+
+// ========================================
+// CLIENTES HABITUALES
+// ========================================
+document.getElementById('btn-cargar-clientes').addEventListener('click', cargarClientesHabituales);
+
+async function cargarClientesHabituales() {
+    const tabla = document.getElementById('tabla-clientes-habituales');
+    tabla.innerHTML = '<div class="loading">Cargando...</div>';
+    
+    try {
+        const response = await gapi.client.sheets.spreadsheets.values.get({
+            spreadsheetId: spreadsheetId,
+            range: 'ClientesHabituales!A:E'
+        });
+        
+        const rows = response.result.values || [];
+        
+        if (rows.length > 1) {
+            let html = `<table class="tabla-registros"><thead><tr><th>Nombre</th><th>CI</th><th>Celular</th><th>Alquileres</th><th>Último</th></tr></thead><tbody>`;
+            
+            for (let i = 1; i < rows.length; i++) {
+                html += `<tr><td>⭐ ${rows[i][0]}</td><td>${rows[i][1]}</td><td>${rows[i][2]}</td><td><strong>${rows[i][3] || 0}</strong></td><td>${rows[i][4] || '-'}</td></tr>`;
+            }
+            
+            html += '</tbody></table>';
+            tabla.innerHTML = html;
+        } else {
+            tabla.innerHTML = '<p class="placeholder-text">No hay clientes habituales</p>';
+        }
+        
+    } catch (e) {
+        console.error('Error:', e);
+        tabla.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
+    }
+}
+
+// ========================================
+// UTILIDADES
+// ========================================
+function mostrarMensaje(el, msg, tipo) {
+    el.textContent = msg;
+    el.className = 'mensaje-resultado ' + tipo;
+    setTimeout(() => { el.className = 'mensaje-resultado'; el.textContent = ''; }, 5000);
+}
+
+// ========================================
+// INICIALIZACIÓN
+// ========================================
+document.addEventListener('DOMContentLoaded', () => {
+    const fechaInput = document.getElementById('fecha-alquiler');
+    if (fechaInput) fechaInput.value = new Date().toISOString().split('T')[0];
+    console.log('🎭 Disfraces Fantasía - Cargando APIs de Google...');
+});
