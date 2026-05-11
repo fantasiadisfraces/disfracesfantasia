@@ -1406,6 +1406,15 @@ footer {
     color: #888;
 }
 
+.login-loading {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
 /* Ajuste para el modal de login */
 .modal-login-content {
     max-width: 420px;

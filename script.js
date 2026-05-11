@@ -73,6 +73,7 @@ function generarNumeroRecibo() {
 // ========================================
 function gapiLoaded() {
     gapi.load('client', initializeGapiClient);
+    deshabilitarBotonLogin(); // Deshabilitar al inicio
 }
 
 async function initializeGapiClient() {
@@ -100,7 +101,31 @@ function gisLoaded() {
 function checkReady() {
     if (gapiInited && gisInited) {
         console.log('🎭 Sistema listo para autenticación');
+        habilitarBotonLogin();
     }
+}
+
+function habilitarBotonLogin() {
+    const btnGoogle = document.getElementById('btn-google-login');
+    if (!btnGoogle) return;
+    btnGoogle.disabled = false;
+    btnGoogle.style.opacity = '1';
+    btnGoogle.style.cursor = 'pointer';
+    // Cambiar texto si hay un indicador de carga
+    const textoBtn = btnGoogle.querySelector('.btn-google-text') || btnGoogle;
+    const parent = btnGoogle.closest('.google-login-container');
+    if (parent) {
+        const hint = parent.querySelector('.login-loading');
+        if (hint) hint.style.display = 'none';
+    }
+}
+
+function deshabilitarBotonLogin() {
+    const btnGoogle = document.getElementById('btn-google-login');
+    if (!btnGoogle) return;
+    btnGoogle.disabled = true;
+    btnGoogle.style.opacity = '0.5';
+    btnGoogle.style.cursor = 'not-allowed';
 }
 
 function handleTokenResponse(resp) {
@@ -275,9 +300,9 @@ window.addEventListener('click', (e) => {
 // ========================================
 document.getElementById('btn-google-login').addEventListener('click', () => {
     if (!gapiInited || !gisInited) {
-        alert('Espera un momento, las APIs de Google están cargando...');
-        return;
+        return; // Botón está deshabilitado, no hacer nada
     }
+
     if (gapi.client.getToken() === null) {
         tokenClient.requestAccessToken({ prompt: 'consent' });
     } else {
