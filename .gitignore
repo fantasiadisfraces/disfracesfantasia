@@ -1,0 +1,31 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Archivos temporales del editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Node modules (si se agrega build tool en el futuro)
+node_modules/
+
+# Archivos de build/minificados (generar localmente)
+*.min.css
+*.min.js
+
+# Credenciales y secretos (NUNCA commitear)
+.env
+.env.local
+*.key
+config-private.js
+
+# Archivos grandes
+*.zip
+*.tar.gz

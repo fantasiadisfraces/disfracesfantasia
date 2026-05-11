@@ -12,6 +12,41 @@ body {
     background-attachment: fixed;
 }
 
+/* Accesibilidad - Focus visible */
+*:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+a:focus-visible {
+    outline: 3px solid #764ba2;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+button:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 5px rgba(102, 126, 234, 0.4);
+}
+
+/* Skip link para accesibilidad */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #667eea;
+    color: white;
+    padding: 8px 16px;
+    z-index: 1001;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 /* Contenedor de secciones */
 section {
     background: rgba(255, 255, 255, 0.95);
@@ -25,6 +60,12 @@ section:first-of-type {
     margin-top: 0;
     border-radius: 0;
     background: transparent;
+}
+
+section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
 }
 
 /* Header */
@@ -115,13 +156,6 @@ nav {
     cursor: pointer;
     text-decoration: none;
     display: inline-block;
-}
-
-/* Sections */
-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 4rem 2rem;
 }
 
 h2 {
@@ -431,24 +465,6 @@ footer {
 .form-group textarea:focus {
     border-color: #667eea;
     outline: none;
-}
-
-.btn-login {
-    width: 100%;
-    padding: 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.login-error {
-    color: #e74c3c;
-    text-align: center;
-    margin-top: 1rem;
 }
 
 /* Modal Clientes */
@@ -1401,22 +1417,17 @@ footer {
 }
 
 /* ========================================
-   PLACEHOLDER DE INPUTS (texto de ejemplo)
+   PLACEHOLDERS Y INPUTS
    ======================================== */
 
 input::placeholder,
 textarea::placeholder,
 select::placeholder {
-    color: rgba(0, 0, 0, 0.15);  /* Muy transparente */
+    color: rgba(0, 0, 0, 0.15);
     font-weight: 300;
     font-style: italic;
     opacity: 1;
 }
-
-/* Para navegadores antiguos */
-input::-webkit-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
-input::-moz-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
-input:-ms-input-placeholder { color: rgba(0, 0, 0, 0.15); font-weight: 300; font-style: italic; }
 
 /* Texto real ingresado - negrita y Arial */
 input,

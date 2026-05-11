@@ -3,18 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disfraces Fantasía - Alquiler de Disfraces</title>
+    <title>Disfraces Fantasía - Alquiler de Disfraces en Oruro, Bolivia</title>
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Alquiler de disfraces en Oruro, Bolivia. Más de 200 disfraces para todas las edades: superhéroes, princesas, terror, piratas y más. Precios desde Bs. 35/día.">
+    <meta name="keywords" content="alquiler disfraces Oruro, disfraces Bolivia, alquiler disfraces fiesta, disfraces Halloween, disfraces infantiles, Disfraces Fantasía">
+    <meta name="author" content="Juvilia Espíndola Ugarte">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://fantasiadisfraces.github.io/disfracesfantasia/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://fantasiadisfraces.github.io/disfracesfantasia/">
+    <meta property="og:title" content="Disfraces Fantasía - Alquiler de Disfraces en Oruro">
+    <meta property="og:description" content="Más de 200 disfraces para alquiler en Oruro, Bolivia. Precios desde Bs. 35/día.">
+    <meta property="og:image" content="https://fantasiadisfraces.github.io/disfracesfantasia/logo-tienda.jpg">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Disfraces Fantasía - Alquiler de Disfraces">
+    <meta name="twitter:description" content="Más de 200 disfraces para alquiler en Oruro, Bolivia.">
+    <meta name="twitter:image" content="https://fantasiadisfraces.github.io/disfracesfantasia/logo-tienda.jpg">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="logo-tienda.jpg">
+
+    <!-- Preconnect a dominios externos -->
+    <link rel="preconnect" href="https://apis.google.com">
+    <link rel="preconnect" href="https://accounts.google.com">
+    <link rel="preconnect" href="https://sheets.googleapis.com">
+    <link rel="preconnect" href="https://www.google.com">
+
+    <!-- CSS crítico inline para primer render -->
     <link rel="stylesheet" href="styles.css">
-    <!-- Google APIs -->
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
+
+    <!-- Google APIs con carga diferida -->
+    <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
 </head>
 <body>
+    <!-- Skip link para accesibilidad -->
+    <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+
     <!-- Header -->
-    <header>
-        <nav>
+    <header role="banner">
+        <nav role="navigation" aria-label="Menú principal">
             <div class="logo">
-                <img src="logo-tienda.jpg" alt="Disfraces Fantasía" class="logo-img">
+                <img src="logo-tienda.jpg" alt="Disfraces Fantasía" class="logo-img" width="50" height="50" loading="eager">
                 <span>Disfraces Fantasía</span>
             </div>
             <ul class="nav-links">
@@ -28,14 +63,16 @@
     </header>
 
     <!-- Hero Section -->
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" aria-label="Sección principal de bienvenida">
         <h1>¡Vive tu Personaje Favorito!</h1>
         <p>Alquila el disfraz perfecto para cualquier ocasión</p>
         <a href="#catalogo" class="cta-button">Ver Disfraces</a>
     </section>
 
+    <!-- Contenido principal -->
+    <main id="contenido-principal">
     <!-- Servicios -->
-    <section id="servicios">
+    <section id="servicios" aria-label="Servicios ofrecidos">
         <h2>Nuestros Servicios</h2>
         <div class="servicios-grid">
             <div class="servicio-card">
@@ -62,7 +99,7 @@
     </section>
 
     <!-- Catálogo -->
-    <section id="catalogo">
+    <section id="catalogo" aria-label="Catálogo de disfraces disponibles">
         <h2>Catálogo de Disfraces</h2>
         <div class="catalogo-grid">
             <div class="disfraz-card">
@@ -117,7 +154,7 @@
     </section>
 
     <!-- Precios -->
-    <section id="precios">
+    <section id="precios" aria-label="Planes y precios de alquiler">
         <h2>Planes de Alquiler</h2>
         <div class="precios-container">
             <p style="font-size: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 1;">💰 Solo Alquilamos - No Vendemos</p>
@@ -143,20 +180,21 @@
     </section>
 
     <!-- Contacto -->
-    <section id="contacto">
+    <section id="contacto" aria-label="Información de contacto">
         <h2>Contáctanos</h2>
         <div class="contacto-grid">
             <div class="contacto-card mapa-card">
                 <div class="contacto-icon">
-                    <img src="ubicacion-logo.png" alt="Ubicación" style="width: 60px; height: 60px;">
+                    <img src="ubicacion-logo.png" alt="Ubicación" width="60" height="60" loading="lazy">
                 </div>
                 <h3>Ubicación</h3>
                 <p>Calle Ayacucho<br>Entre Tejerina y Tarapacá<br>Oruro, Bolivia</p>
                 <div class="mapa-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo" 
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo"
+                            allowfullscreen=""
+                            loading="lazy"
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Ubicación de Disfraces Fantasía en Google Maps">
                     </iframe>
                 </div>
                 <a href="https://maps.app.goo.gl/bgaBBqzaaxBz6M4f8" class="btn-mapa" target="_blank">
@@ -165,21 +203,21 @@
             </div>
             <div class="contacto-card">
                 <div class="contacto-icon">
-                    <img src="telefono-logo.webp" alt="Teléfono" style="width: 60px; height: 60px;">
+                    <img src="telefono-logo.webp" alt="Teléfono" width="60" height="60" loading="lazy">
                 </div>
                 <h3>Teléfono / Celular</h3>
                 <p><a href="tel:+59176133121">+591 76133121</a></p>
             </div>
             <div class="contacto-card">
                 <div class="contacto-icon">
-                    <img src="correo-logo.png" alt="Email" style="width: 60px; height: 60px;">
+                    <img src="correo-logo.png" alt="Email" width="60" height="60" loading="lazy">
                 </div>
                 <h3>Email</h3>
                 <p><a href="mailto:info@disfracesfantasia.com">info@disfracesfantasia.com</a></p>
             </div>
             <div class="contacto-card">
                 <div class="contacto-icon">
-                    <img src="reloj-logo.png" alt="Horario" style="width: 60px; height: 60px;">
+                    <img src="reloj-logo.png" alt="Horario" width="60" height="60" loading="lazy">
                 </div>
                 <h3>Horario</h3>
                 <p>Lunes a Sábado<br>9:00 AM - 7:00 PM</p>
@@ -188,17 +226,17 @@
 
         <h2 style="margin-top: 4rem;" id="redes">Síguenos en Redes</h2>
         <div class="redes-sociales">
-            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank">
-                <img src="facebook-logo.png" alt="Facebook">
+            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank" rel="noopener noreferrer">
+                <img src="facebook-logo.png" alt="Facebook" width="50" height="50" loading="lazy">
             </a>
-            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank">
-                <img src="instagram-logo.png" alt="Instagram">
+            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank" rel="noopener noreferrer">
+                <img src="instagram-logo.png" alt="Instagram" width="50" height="50" loading="lazy">
             </a>
-            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank">
-                <img src="whatsapp-logo.png" alt="WhatsApp">
+            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank" rel="noopener noreferrer">
+                <img src="whatsapp-logo.png" alt="WhatsApp" width="50" height="50" loading="lazy">
             </a>
-            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank">
-                <img src="tiktok-logo.png" alt="TikTok">
+            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank" rel="noopener noreferrer">
+                <img src="tiktok-logo.png" alt="TikTok" width="50" height="50" loading="lazy">
             </a>
         </div>
     </section>
@@ -437,8 +475,10 @@
         </div>
     </div>
 
+    </main>
+
     <!-- Footer -->
-    <footer>
+    <footer role="contentinfo">
         <p>&copy; 2025 Disfraces Fantasía - Alquiler de Disfraces. Todos los derechos reservados.</p>
         <p style="margin-top: 0.5rem;">Propietaria: Juvilia Espíndola Ugarte</p>
         <p style="margin-top: 0.5rem;">🎭 ¡Tu evento merece el mejor disfraz!</p>
