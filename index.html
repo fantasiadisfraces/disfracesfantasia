@@ -4,82 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Disfraces Fantasía - Alquiler de Disfraces en Oruro, Bolivia</title>
-
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Alquiler de disfraces en Oruro, Bolivia. Más de 200 disfraces para todas las edades: superhéroes, princesas, terror, piratas y más. Precios desde Bs. 35/día.">
-    <meta name="keywords" content="alquiler disfraces Oruro, disfraces Bolivia, alquiler disfraces fiesta, disfraces Halloween, disfraces infantiles, Disfraces Fantasía">
-    <meta name="author" content="Juvilia Espíndola Ugarte">
-    <meta name="robots" content="index, follow">
+    <meta name="description" content="Alquiler de disfraces en Oruro, Bolivia. Más de 200 disfraces para todas las edades. Precios desde Bs. 35/día.">
     <link rel="canonical" href="https://fantasiadisfraces.github.io/disfracesfantasia/">
-
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://fantasiadisfraces.github.io/disfracesfantasia/">
-    <meta property="og:title" content="Disfraces Fantasía - Alquiler de Disfraces en Oruro">
-    <meta property="og:description" content="Más de 200 disfraces para alquiler en Oruro, Bolivia. Precios desde Bs. 35/día.">
-    <meta property="og:image" content="https://fantasiadisfraces.github.io/disfracesfantasia/logo-tienda.jpg">
-
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Disfraces Fantasía - Alquiler de Disfraces">
-    <meta name="twitter:description" content="Más de 200 disfraces para alquiler en Oruro, Bolivia.">
-    <meta name="twitter:image" content="https://fantasiadisfraces.github.io/disfracesfantasia/logo-tienda.jpg">
-
-    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="logo-tienda.jpg">
-
-    <!-- Preconnect a dominios externos -->
     <link rel="preconnect" href="https://apis.google.com">
     <link rel="preconnect" href="https://accounts.google.com">
     <link rel="preconnect" href="https://sheets.googleapis.com">
     <link rel="preconnect" href="https://www.google.com">
-
-    <!-- CSS crítico inline para primer render -->
     <link rel="stylesheet" href="styles.css">
-
-    <!-- Google APIs con carga optimizada -->
     <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
     <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
-
-    <style>
-        /* Loading state del botón de login */
-        .login-loading {
-            text-align: center;
-            color: #667eea;
-            font-size: 0.9rem;
-            margin-bottom: 1rem;
-        }
-        .login-loading.loading-complete {
-            display: none;
-        }
-        .login-loading .loading-step {
-            display: block;
-            padding: 4px 0;
-            opacity: 0.5;
-            transition: opacity 0.3s;
-        }
-        .login-loading .loading-step.active {
-            opacity: 1;
-            font-weight: bold;
-        }
-        .login-loading .loading-step.done {
-            opacity: 1;
-            color: #27ae60;
-        }
-        #btn-google-login {
-            transition: opacity 0.3s;
-        }
-        #btn-google-login:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-    </style>
 </head>
 <body>
-    <!-- Skip link para accesibilidad -->
-    <a href="#contenido-principal" class="skip-link">Saltar al contenido principal</a>
+    <a href="#contenido-principal" class="skip-link">Saltar al contenido</a>
 
-    <!-- Header -->
     <header role="banner">
         <nav role="navigation" aria-label="Menú principal">
             <div class="logo">
@@ -96,431 +34,220 @@
         </nav>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero" id="inicio" aria-label="Sección principal de bienvenida">
+    <section class="hero" id="inicio" aria-label="Bienvenida">
         <h1>¡Vive tu Personaje Favorito!</h1>
         <p>Alquila el disfraz perfecto para cualquier ocasión</p>
         <a href="#catalogo" class="cta-button">Ver Disfraces</a>
     </section>
 
-    <!-- Contenido principal -->
     <main id="contenido-principal">
-    <!-- Servicios -->
-    <section id="servicios" aria-label="Servicios ofrecidos">
+    <section id="servicios" aria-label="Servicios">
         <h2>Nuestros Servicios</h2>
         <div class="servicios-grid">
-            <div class="servicio-card">
-                <div class="servicio-icon">🎪</div>
-                <h3>Alquiler por Días</h3>
-                <p>Renta tu disfraz por 1, 3 o más días según tus necesidades</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">✨</div>
-                <h3>Amplio Catálogo</h3>
-                <p>Más de 200 disfraces para todas las edades y ocasiones</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">👔</div>
-                <h3>Disfraces Limpiados</h3>
-                <p>Todos nuestros disfraces se entregan lavados y desinfectados</p>
-            </div>
-            <div class="servicio-card">
-                <div class="servicio-icon">🎁</div>
-                <h3>Accesorios Incluidos</h3>
-                <p>Complementos y accesorios para completar tu look</p>
-            </div>
+            <div class="servicio-card"><div class="servicio-icon">🎪</div><h3>Alquiler por Días</h3><p>Renta por 1, 3 o más días</p></div>
+            <div class="servicio-card"><div class="servicio-icon">✨</div><h3>Amplio Catálogo</h3><p>Más de 200 disfraces disponibles</p></div>
+            <div class="servicio-card"><div class="servicio-icon">👔</div><h3>Disfraces Limpios</h3><p>Entregados lavados y desinfectados</p></div>
+            <div class="servicio-card"><div class="servicio-icon">🎁</div><h3>Accesorios Incluidos</h3><p>Complementos para completar tu look</p></div>
         </div>
     </section>
 
-    <!-- Catálogo -->
-    <section id="catalogo" aria-label="Catálogo de disfraces disponibles">
+    <section id="catalogo" aria-label="Catálogo">
         <h2>Catálogo de Disfraces</h2>
         <div class="catalogo-grid">
-            <div class="disfraz-card">
-                <div class="disfraz-img">🦸‍♂️</div>
-                <div class="disfraz-info">
-                    <h3>Superhéroes</h3>
-                    <p>Spider-Man, Batman, Superman, Wonder Woman y más</p>
-                    <p class="precio">Desde Bs. 50/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">👸</div>
-                <div class="disfraz-info">
-                    <h3>Princesas</h3>
-                    <p>Elsa, Cenicienta, Blanca Nieves, Bella y más</p>
-                    <p class="precio">Desde Bs. 45/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🧟</div>
-                <div class="disfraz-info">
-                    <h3>Terror</h3>
-                    <p>Zombies, vampiros, brujas y criaturas espeluznantes</p>
-                    <p class="precio">Desde Bs. 40/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🤡</div>
-                <div class="disfraz-info">
-                    <h3>Personajes</h3>
-                    <p>Payasos, mimos, animales y mucho más</p>
-                    <p class="precio">Desde Bs. 35/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🏴‍☠️</div>
-                <div class="disfraz-info">
-                    <h3>Piratas</h3>
-                    <p>Capitanes piratas, bucaneros y corsarios</p>
-                    <p class="precio">Desde Bs. 40/día</p>
-                </div>
-            </div>
-            <div class="disfraz-card">
-                <div class="disfraz-img">🎅</div>
-                <div class="disfraz-info">
-                    <h3>Navideños</h3>
-                    <p>Santa Claus, elfos, renos y más</p>
-                    <p class="precio">Desde Bs. 45/día</p>
-                </div>
-            </div>
+            <div class="disfraz-card"><div class="disfraz-img">🦸‍️</div><div class="disfraz-info"><h3>Superhéroes</h3><p>Spider-Man, Batman, Superman y más</p><p class="precio">Desde Bs. 50/día</p></div></div>
+            <div class="disfraz-card"><div class="disfraz-img">👸</div><div class="disfraz-info"><h3>Princesas</h3><p>Elsa, Cenicienta, Blanca Nieves y más</p><p class="precio">Desde Bs. 45/día</p></div></div>
+            <div class="disfraz-card"><div class="disfraz-img">🧟</div><div class="disfraz-info"><h3>Terror</h3><p>Zombies, vampiros, brujas y más</p><p class="precio">Desde Bs. 40/día</p></div></div>
+            <div class="disfraz-card"><div class="disfraz-img">🤡</div><div class="disfraz-info"><h3>Personajes</h3><p>Payasos, mimos, animales y más</p><p class="precio">Desde Bs. 35/día</p></div></div>
+            <div class="disfraz-card"><div class="disfraz-img">🏴‍☠️</div><div class="disfraz-info"><h3>Piratas</h3><p>Capitanes, bucaneros y corsarios</p><p class="precio">Desde Bs. 40/día</p></div></div>
+            <div class="disfraz-card"><div class="disfraz-img">🎅</div><div class="disfraz-info"><h3>Navideños</h3><p>Santa Claus, elfos, renos y más</p><p class="precio">Desde Bs. 45/día</p></div></div>
         </div>
     </section>
 
-    <!-- Precios -->
-    <section id="precios" aria-label="Planes y precios de alquiler">
+    <section id="precios" aria-label="Precios">
         <h2>Planes de Alquiler</h2>
         <div class="precios-container">
-            <p style="font-size: 1.2rem; margin-bottom: 1rem; position: relative; z-index: 1;">💰 Solo Alquilamos - No Vendemos</p>
+            <p style="font-size: 1.2rem; margin-bottom: 1rem;">💰 Solo Alquilamos - No Vendemos</p>
             <div class="precios-grid">
-                <div class="precio-item">
-                    <h3>1 Día</h3>
-                    <p>Perfecto para eventos cortos</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 35</p>
-                </div>
-                <div class="precio-item">
-                    <h3>3 Días</h3>
-                    <p>Ideal para fines de semana</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 80</p>
-                </div>
-                <div class="precio-item">
-                    <h3>Semanal</h3>
-                    <p>Para festividades largas</p>
-                    <p style="margin-top: 1rem;">Desde Bs. 150</p>
-                </div>
+                <div class="precio-item"><h3>1 Día</h3><p>Eventos cortos</p><p style="margin-top: 1rem;">Desde Bs. 35</p></div>
+                <div class="precio-item"><h3>3 Días</h3><p>Fines de semana</p><p style="margin-top: 1rem;">Desde Bs. 80</p></div>
+                <div class="precio-item"><h3>Semanal</h3><p>Festividades largas</p><p style="margin-top: 1rem;">Desde Bs. 150</p></div>
             </div>
-            <p style="margin-top: 2rem; font-size: 0.9rem; position: relative; z-index: 1;">* Depósito reembolsable requerido | Descuentos por grupos</p>
+            <p style="margin-top: 2rem; font-size: 0.9rem;">* Depósito reembolsable | Descuentos por grupos</p>
         </div>
     </section>
 
-    <!-- Contacto -->
-    <section id="contacto" aria-label="Información de contacto">
+    <section id="contacto" aria-label="Contacto">
         <h2>Contáctanos</h2>
         <div class="contacto-grid">
             <div class="contacto-card mapa-card">
-                <div class="contacto-icon">
-                    <img src="ubicacion-logo.png" alt="Ubicación" width="60" height="60" loading="lazy">
-                </div>
+                <div class="contacto-icon"><img src="ubicacion-logo.png" alt="Ubicación" width="60" height="60" loading="lazy"></div>
                 <h3>Ubicación</h3>
                 <p>Calle Ayacucho<br>Entre Tejerina y Tarapacá<br>Oruro, Bolivia</p>
                 <div class="mapa-container">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo"
-                            allowfullscreen=""
-                            loading="lazy"
-                            referrerpolicy="no-referrer-when-downgrade"
-                            title="Ubicación de Disfraces Fantasía en Google Maps">
-                    </iframe>
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d950.4758383441334!2d-67.104336!3d-17.970648!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!2zMTfCsDU4JzE0LjMiUyA2N8KwMDYnMTUuNiJX!5e0!3m2!1ses!2sbo!4v1699999999999!5m2!1ses!2sbo" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa de ubicación"></iframe>
                 </div>
-                <a href="https://maps.app.goo.gl/bgaBBqzaaxBz6M4f8" class="btn-mapa" target="_blank">
-                    📍 Abrir en Google Maps
-                </a>
+                <a href="https://maps.app.goo.gl/bgaBBqzaaxBz6M4f8" class="btn-mapa" target="_blank" rel="noopener noreferrer">📍 Abrir en Maps</a>
             </div>
             <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="telefono-logo.webp" alt="Teléfono" width="60" height="60" loading="lazy">
-                </div>
-                <h3>Teléfono / Celular</h3>
-                <p><a href="tel:+59176133121">+591 76133121</a></p>
+                <div class="contacto-icon"><img src="telefono-logo.webp" alt="Teléfono" width="60" height="60" loading="lazy"></div>
+                <h3>Teléfono</h3><p><a href="tel:+59176133121">+591 76133121</a></p>
             </div>
             <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="correo-logo.png" alt="Email" width="60" height="60" loading="lazy">
-                </div>
-                <h3>Email</h3>
-                <p><a href="mailto:info@disfracesfantasia.com">info@disfracesfantasia.com</a></p>
+                <div class="contacto-icon"><img src="correo-logo.png" alt="Email" width="60" height="60" loading="lazy"></div>
+                <h3>Email</h3><p><a href="mailto:info@disfracesfantasia.com">info@disfracesfantasia.com</a></p>
             </div>
             <div class="contacto-card">
-                <div class="contacto-icon">
-                    <img src="reloj-logo.png" alt="Horario" width="60" height="60" loading="lazy">
-                </div>
-                <h3>Horario</h3>
-                <p>Lunes a Sábado<br>9:00 AM - 7:00 PM</p>
+                <div class="contacto-icon"><img src="reloj-logo.png" alt="Horario" width="60" height="60" loading="lazy"></div>
+                <h3>Horario</h3><p>Lunes a Sábado<br>9:00 AM - 7:00 PM</p>
             </div>
         </div>
-
         <h2 style="margin-top: 4rem;" id="redes">Síguenos en Redes</h2>
         <div class="redes-sociales">
-            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank" rel="noopener noreferrer">
-                <img src="facebook-logo.png" alt="Facebook" width="50" height="50" loading="lazy">
-            </a>
-            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank" rel="noopener noreferrer">
-                <img src="instagram-logo.png" alt="Instagram" width="50" height="50" loading="lazy">
-            </a>
-            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank" rel="noopener noreferrer">
-                <img src="whatsapp-logo.png" alt="WhatsApp" width="50" height="50" loading="lazy">
-            </a>
-            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank" rel="noopener noreferrer">
-                <img src="tiktok-logo.png" alt="TikTok" width="50" height="50" loading="lazy">
-            </a>
+            <a href="https://www.facebook.com/profile.php?id=61582407245470" class="red-social facebook" target="_blank" rel="noopener noreferrer"><img src="facebook-logo.png" alt="Facebook" width="50" height="50" loading="lazy"></a>
+            <a href="https://www.instagram.com/fantasiadisfraces.bo/" class="red-social instagram" target="_blank" rel="noopener noreferrer"><img src="instagram-logo.png" alt="Instagram" width="50" height="50" loading="lazy"></a>
+            <a href="https://wa.me/59176133121" class="red-social whatsapp" target="_blank" rel="noopener noreferrer"><img src="whatsapp-logo.png" alt="WhatsApp" width="50" height="50" loading="lazy"></a>
+            <a href="https://www.tiktok.com/@disfracesfantasi?lang=es-419" class="red-social tiktok" target="_blank" rel="noopener noreferrer"><img src="tiktok-logo.png" alt="TikTok" width="50" height="50" loading="lazy"></a>
         </div>
     </section>
+    </main>
 
-    <!-- Modal de Login con Google -->
-    <div id="modal-login" class="modal">
+    <!-- Modal Login -->
+    <div id="modal-login" class="modal" role="dialog" aria-labelledby="login-title">
         <div class="modal-content modal-login-content">
-            <span class="close-modal">&times;</span>
-            <div class="login-header">
-                <div class="login-icon">🔐</div>
-                <h2>Acceso al Sistema</h2>
-                <p>Inicia sesión con tu cuenta de Google para acceder al sistema de clientes</p>
-            </div>
-            <div class="google-login-container">
-                <div class="login-loading" id="login-loading">
-                    <span class="loading-step" id="step-gapi">📡 Conectando con Google...</span>
-                    <span class="loading-step" id="step-gis">🔑 Preparando autenticación...</span>
-                    <span class="loading-step" id="step-ready">✅ Listo para iniciar sesión</span>
+            <span class="close-modal" aria-label="Cerrar">&times;</span>
+            <div class="login-container">
+                <div class="login-brand">
+                    <div class="login-logo"></div>
+                    <h2 id="login-title">Sistema de Clientes</h2>
+                    <p>Acceso para personal autorizado</p>
                 </div>
-                <button id="btn-google-login" class="btn-google" disabled>
-                    <svg width="24" height="24" viewBox="0 0 24 24">
-                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    Iniciar sesión con Google
-                </button>
-                <p class="login-hint">Solo personal autorizado de Disfraces Fantasía</p>
+                <div class="login-actions">
+                    <button id="btn-google-login" class="btn-google">
+                        <svg width="20" height="20" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                        Iniciar sesión con Google
+                    </button>
+                    <div class="login-loading" id="login-loading">
+                        <div class="loading-spinner"></div>
+                        <span id="loading-text">Conectando...</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Gestión de Clientes -->
-    <div id="modal-clientes" class="modal">
+    <!-- Modal Clientes -->
+    <div id="modal-clientes" class="modal" role="dialog" aria-labelledby="clientes-title">
         <div class="modal-content modal-clientes-content">
             <div class="modal-header-clientes">
-                <h2>👥 Gestión de Clientes</h2>
+                <div class="header-left">
+                    <div class="header-icon">🎭</div>
+                    <div><h2 id="clientes-title">Sistema de Clientes</h2><span id="usuario-logueado" class="user-badge"></span></div>
+                </div>
                 <div class="header-actions">
-                    <span id="usuario-logueado"></span>
-                    <button id="btn-logout" class="btn-logout">Cerrar Sesión</button>
-                    <span class="close-modal">&times;</span>
+                    <button id="btn-logout" class="btn-logout" title="Salir"><span>Salir</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+                    <span class="close-modal" aria-label="Cerrar">&times;</span>
                 </div>
             </div>
-            
-            <!-- Tabs -->
+            <div class="stats-bar">
+                <div class="stat-item"><span class="stat-icon">📋</span><span class="stat-value" id="stat-hoy">0</span><span class="stat-label">Hoy</span></div>
+                <div class="stat-item"><span class="stat-icon">🔄</span><span class="stat-value" id="stat-pendientes">0</span><span class="stat-label">Pendientes</span></div>
+                <div class="stat-item"><span class="stat-icon">✅</span><span class="stat-value" id="stat-devueltos">0</span><span class="stat-label">Devueltos</span></div>
+            </div>
             <div class="tabs-container">
-                <button class="tab-btn active" data-tab="registro">📝 Nuevo</button>
-                <button class="tab-btn" data-tab="buscar">🔍 Buscar</button>
-                <button class="tab-btn" data-tab="historial">📋 Historial</button>
-                <button class="tab-btn" data-tab="clientes-habituales">⭐ Habituales</button>
+                <button class="tab-btn active" data-tab="registro"><span class="tab-icon">📝</span>Nuevo</button>
+                <button class="tab-btn" data-tab="buscar"><span class="tab-icon">🔍</span>Buscar</button>
+                <button class="tab-btn" data-tab="historial"><span class="tab-icon">📋</span>Historial</button>
+                <button class="tab-btn" data-tab="clientes-habituales"><span class="tab-icon">⭐</span>Habituales</button>
             </div>
 
-            <!-- Tab: Nuevo Registro -->
+            <!-- Tab Nuevo -->
             <div id="tab-registro" class="tab-content active">
+                <div id="cliente-habitual-alert" class="cliente-habitual-alert" style="display: none;"></div>
+                <div id="alerta-deudas" style="display: none;"></div>
                 <form id="form-registro">
-                    <!-- Indicador de cliente habitual -->
-                    <div id="cliente-habitual-alert" class="cliente-habitual-alert" style="display: none;">
-                        <span class="alert-icon">⭐</span>
-                        <span class="alert-text">¡Cliente habitual detectado! Datos cargados.</span>
-                        <span class="alert-alquileres"></span>
-                    </div>
-                    
-                    <!-- Alerta de deudas pendientes -->
-                    <div id="alerta-deudas" style="display: none;"></div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="cedula">🪪 Cédula de Identidad</label>
-                            <div class="input-with-loader">
-                                <input type="text" id="cedula" placeholder="Ej: 12345678 LP" required>
-                                <span id="cedula-loader" class="input-loader" style="display: none;">🔄</span>
-                            </div>
-                            <small class="input-hint">Ingresa CI para autocompletar si es cliente habitual</small>
-                        </div>
-                        <div class="form-group">
-                            <label for="nombre-cliente">👤 Nombre Completo</label>
-                            <input type="text" id="nombre-cliente" placeholder="Ej: Juan Pérez García" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="celular">📱 Celular</label>
-                            <input type="tel" id="celular" placeholder="Ej: 76133121" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="disfraz">🎭 Disfraz que Lleva</label>
-                            <input type="text" id="disfraz" placeholder="Ej: Spider-Man adulto talla M" required>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="precio-alquiler">💲 Precio Alquiler (Bs.)</label>
-                            <input type="number" id="precio-alquiler" placeholder="Ej: 50" min="0" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="condiciones">📋 Condiciones del Disfraz</label>
-                            <select id="condiciones" required>
-                                <option value="">Seleccionar...</option>
-                                <option value="Excelente">✨ Excelente - Como nuevo</option>
-                                <option value="Bueno">👍 Bueno - Pequeños detalles</option>
-                                <option value="Regular">⚠️ Regular - Desgaste visible</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="fecha-alquiler">📅 Fecha Alquiler</label>
-                            <input type="date" id="fecha-alquiler" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="fecha-devolucion">📅 Fecha Devolución</label>
-                            <input type="date" id="fecha-devolucion" required>
-                        </div>
-                    </div>
-
-                    <!-- Sección de Garantía -->
-                    <div class="garantia-section">
-                        <h3 class="section-title">🛡️ Garantía del Alquiler</h3>
+                    <div class="form-section"><h3 class="section-label"> Datos del Cliente</h3>
                         <div class="form-row">
-                            <div class="form-group">
-                                <label for="garantia-dinero">💵 Garantía en Dinero (Bs.)</label>
-                                <input type="number" id="garantia-dinero" placeholder="Ej: 100" min="0" value="0">
-                            </div>
-                            <div class="form-group">
-                                <label for="garantia-objeto">📦 Garantía en Objeto</label>
-                                <input type="text" id="garantia-objeto" placeholder="Ej: Celular, CI original, etc.">
-                            </div>
+                            <div class="form-group"><label for="cedula">🪪 Cédula</label><div class="input-with-loader"><input type="text" id="cedula" placeholder="12345678 LP" required><span id="cedula-loader" class="input-loader" style="display: none;">⏳</span></div></div>
+                            <div class="form-group"><label for="nombre-cliente"> Nombre</label><input type="text" id="nombre-cliente" placeholder="Nombre completo" required></div>
                         </div>
-                        <div class="form-group full-width">
-                            <label for="descripcion-garantia">📝 Descripción del Objeto en Garantía</label>
-                            <textarea id="descripcion-garantia" rows="2" placeholder="Marca, modelo, color, estado del objeto..."></textarea>
+                        <div class="form-row"><div class="form-group"><label for="celular"> Celular</label><input type="tel" id="celular" placeholder="76133121" required></div></div>
+                    </div>
+                    <div class="form-section"><h3 class="section-label">🎭 Alquiler</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label for="disfraz">🎭 Disfraz</label><input type="text" id="disfraz" placeholder="Spider-Man talla M" required></div>
+                            <div class="form-group"><label for="precio-alquiler">💲 Precio Bs.</label><input type="number" id="precio-alquiler" placeholder="50" min="0" required></div>
                         </div>
+                        <div class="form-row">
+                            <div class="form-group"><label for="fecha-alquiler"> Alquiler</label><input type="date" id="fecha-alquiler" required></div>
+                            <div class="form-group"><label for="fecha-devolucion"> Devolución</label><input type="date" id="fecha-devolucion" required></div>
+                        </div>
+                        <div class="form-row"><div class="form-group"><label for="condiciones"> Estado</label><select id="condiciones" required><option value="">Seleccionar...</option><option value="Excelente">✨ Excelente</option><option value="Bueno">👍 Bueno</option><option value="Regular">⚠️ Regular</option></select></div></div>
                     </div>
-
-                    <div class="form-group full-width">
-                        <label for="observaciones">📝 Observaciones Generales</label>
-                        <textarea id="observaciones" rows="2" placeholder="Accesorios incluidos, acuerdos especiales..."></textarea>
+                    <div class="form-section garantia-section"><h3 class="section-label">🛡️ Garantía</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label for="garantia-dinero"> Monto Bs.</label><input type="number" id="garantia-dinero" placeholder="100" min="0" value="0"></div>
+                            <div class="form-group"><label for="garantia-objeto"> Objeto</label><input type="text" id="garantia-objeto" placeholder="Celular, CI..."></div>
+                        </div>
+                        <div class="form-group full-width"><label for="descripcion-garantia"> Descripción</label><textarea id="descripcion-garantia" rows="2" placeholder="Marca, modelo, estado..."></textarea></div>
                     </div>
-
+                    <div class="form-group full-width"><label for="observaciones"> Observaciones</label><textarea id="observaciones" rows="2" placeholder="Accesorios, acuerdos..."></textarea></div>
                     <div class="form-actions">
-                        <button type="submit" class="btn-registrar">
-                            <span class="btn-text">✅ Registrar Alquiler</span>
-                            <span class="btn-loading" style="display: none;">⏳ Guardando...</span>
-                        </button>
-                        <button type="button" id="btn-imprimir-recibo" class="btn-imprimir" style="display: none;">
-                            🖨️ Imprimir Recibo
-                        </button>
+                        <button type="submit" class="btn-registrar"><span class="btn-text">✅ Registrar</span><span class="btn-loading" style="display: none;">⏳...</span></button>
+                        <button type="button" id="btn-imprimir-recibo" class="btn-imprimir" style="display: none;">🖨️ Recibo</button>
                         <button type="reset" class="btn-limpiar">🗑️ Limpiar</button>
                     </div>
                 </form>
                 <div id="mensaje-registro" class="mensaje-resultado"></div>
             </div>
 
-            <!-- Tab: Buscar Cliente -->
+            <!-- Tab Buscar -->
             <div id="tab-buscar" class="tab-content">
                 <div class="busqueda-container">
-                    <div class="form-group busqueda-grupo">
-                        <label for="buscar-input">🔍 Buscar por Nombre o Cédula</label>
-                        <div class="busqueda-input-wrapper">
-                            <input type="text" id="buscar-input" placeholder="Escribe nombre o cédula...">
-                            <button id="btn-buscar" class="btn-buscar">Buscar</button>
-                        </div>
+                    <div class="busqueda-input-wrapper">
+                        <input type="text" id="buscar-input" placeholder="Buscar por nombre o cédula...">
+                        <button id="btn-buscar" class="btn-buscar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>Buscar</button>
                     </div>
                 </div>
-                <div id="resultados-busqueda" class="resultados-container">
-                    <p class="placeholder-text">Ingresa un nombre o cédula para buscar</p>
-                </div>
-
-                <!-- Modal devolución -->
+                <div id="resultados-busqueda" class="resultados-container"><p class="placeholder-text">Escribe para buscar</p></div>
                 <div id="modal-devolucion" class="modal-inline" style="display: none;">
                     <div class="devolucion-content">
-                        <h3>📦 Registrar Devolución</h3>
+                        <h3>📦 Devolución</h3>
                         <p id="info-devolucion"></p>
-                        <div class="form-group">
-                            <label for="condiciones-devolucion">Estado del disfraz:</label>
-                            <select id="condiciones-devolucion" required>
-                                <option value="Excelente">✨ Excelente - Sin daños</option>
-                                <option value="Bueno">👍 Bueno - Uso normal</option>
-                                <option value="Dañado">⚠️ Dañado - Requiere reparación</option>
-                                <option value="Muy Dañado">❌ Muy Dañado</option>
-                            </select>
-                        </div>
-                        <div class="garantia-devolucion-info" id="garantia-devolucion-info">
-                            <h4>🛡️ Garantía a devolver:</h4>
-                            <p id="garantia-devolver-texto"></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="notas-devolucion">Notas:</label>
-                            <textarea id="notas-devolucion" rows="2" placeholder="Observaciones..."></textarea>
-                        </div>
-                        <div class="devolucion-actions">
-                            <button id="btn-confirmar-devolucion" class="btn-confirmar">✅ Confirmar</button>
-                            <button id="btn-cancelar-devolucion" class="btn-cancelar">❌ Cancelar</button>
-                        </div>
+                        <div class="form-group"><label>Estado:</label><select id="condiciones-devolucion"><option value="Excelente">✨ Excelente</option><option value="Bueno">👍 Bueno</option><option value="Dañado">⚠️ Dañado</option><option value="Muy Dañado">❌ Muy Dañado</option></select></div>
+                        <div class="garantia-devolucion-info"><h4>🛡️ Garantía:</h4><p id="garantia-devolver-texto"></p></div>
+                        <div class="form-group"><label>Notas:</label><textarea id="notas-devolucion" rows="2"></textarea></div>
+                        <div class="devolucion-actions"><button id="btn-confirmar-devolucion" class="btn-confirmar">✅ Confirmar</button><button id="btn-cancelar-devolucion" class="btn-cancelar"> Cancelar</button></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Tab: Historial -->
+            <!-- Tab Historial -->
             <div id="tab-historial" class="tab-content">
-                <div class="historial-controles">
-                    <button id="btn-cargar-historial" class="btn-cargar">📥 Cargar Registros</button>
-                    <select id="filtro-estado">
-                        <option value="todos">Todos</option>
-                        <option value="Alquilado">🔴 Alquilados</option>
-                        <option value="Devuelto">🟢 Devueltos</option>
-                    </select>
-                </div>
-                <div id="tabla-historial" class="tabla-container">
-                    <p class="placeholder-text">Haz clic en "Cargar Registros"</p>
-                </div>
+                <div class="historial-controles"><button id="btn-cargar-historial" class="btn-cargar">📥 Cargar</button><select id="filtro-estado"><option value="todos">Todos</option><option value="Alquilado">🔴 Alquilados</option><option value="Devuelto">🟢 Devueltos</option></select></div>
+                <div id="tabla-historial" class="tabla-container"><p class="placeholder-text">Haz clic en Cargar</p></div>
             </div>
 
-            <!-- Tab: Clientes Habituales -->
+            <!-- Tab Habituales -->
             <div id="tab-clientes-habituales" class="tab-content">
-                <div class="clientes-habituales-header">
-                    <h3>⭐ Clientes Habituales</h3>
-                    <p>Sus datos se cargan automáticamente al ingresar su CI en nuevo registro.</p>
-                </div>
-                <div class="historial-controles">
-                    <button id="btn-cargar-clientes" class="btn-cargar">📥 Cargar Clientes</button>
-                </div>
-                <div id="tabla-clientes-habituales" class="tabla-container">
-                    <p class="placeholder-text">Haz clic en "Cargar Clientes"</p>
-                </div>
+                <div class="clientes-habituales-header"><h3>⭐ Habituales</h3><p>Datos se cargan automáticamente</p></div>
+                <div class="historial-controles"><button id="btn-cargar-clientes" class="btn-cargar">📥 Cargar</button></div>
+                <div id="tabla-clientes-habituales" class="tabla-container"><p class="placeholder-text">Haz clic en Cargar</p></div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Recibo para Imprimir -->
+    <!-- Modal Recibo -->
     <div id="modal-recibo" class="modal">
         <div class="modal-content modal-recibo-content">
-            <div class="recibo-no-print">
-                <button id="btn-cerrar-recibo" class="btn-cerrar-recibo">✕ Cerrar</button>
-                <button id="btn-print-recibo" class="btn-print-recibo">🖨️ Imprimir</button>
-            </div>
-            <div id="recibo-contenido" class="recibo-contenido">
-                <!-- Contenido del recibo generado dinámicamente -->
-            </div>
+            <div class="recibo-no-print"><button id="btn-cerrar-recibo" class="btn-cerrar-recibo">✕ Cerrar</button><button id="btn-print-recibo" class="btn-print-recibo">🖨️ Imprimir</button></div>
+            <div id="recibo-contenido" class="recibo-contenido"></div>
         </div>
     </div>
 
-    </main>
-
-    <!-- Footer -->
     <footer role="contentinfo">
         <p>&copy; 2025 Disfraces Fantasía - Alquiler de Disfraces. Todos los derechos reservados.</p>
-        <p style="margin-top: 0.5rem;">Propietaria: Juvilia Espíndola Ugarte</p>
-        <p style="margin-top: 0.5rem;">🎭 ¡Tu evento merece el mejor disfraz!</p>
+        <p>Propietaria: Juvilia Espíndola Ugarte</p>
+        <p>🎭 ¡Tu evento merece el mejor disfraz!</p>
     </footer>
 
     <script src="config.js"></script>

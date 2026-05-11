@@ -1,903 +1,316 @@
 // ========================================
-// DISFRACES FANTASÍA - SCRIPT OPTIMIZADO
+// DISFRACES FANTASÍA - JS OPTIMIZADO
 // ========================================
 
-// ========================================
-// CONFIGURACIÓN DE GOOGLE SHEETS API
-// ========================================
 const CLIENT_ID = CONFIG.CLIENT_ID;
 const API_KEY = CONFIG.API_KEY;
 const SPREADSHEET_ID = CONFIG.GOOGLE_SHEET_ID;
 const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
 const SCOPES = 'https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/userinfo.email';
 
-// Variables de autenticación
-let tokenClient;
-let gapiInited = false;
-let gisInited = false;
-let spreadsheetId = SPREADSHEET_ID;
-let emailUsuario = '';
+let tokenClient, gapiInited = false, gisInited = false;
+let spreadsheetId = SPREADSHEET_ID, emailUsuario = '';
+let usuarioLogueado = false, registroSeleccionado = null, ultimoRegistro = null;
 
-// Variables globales
-let usuarioLogueado = false;
-let registroSeleccionado = null;
-let ultimoRegistro = null;
-let usuarioGoogle = null;
+// Utilidades
+function debounce(fn, ms = 500) { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn.apply(this, a), ms); }; }
+function safeGapi(fn, msg = 'Error') { return fn().catch(e => { console.error(msg, e); throw new Error(msg + ': ' + e.message); }); }
+function mostrarMensaje(el, msg, tipo) { el.textContent = msg; el.className = 'mensaje-resultado ' + tipo; setTimeout(() => { el.className = 'mensaje-resultado'; }, 5000); }
+function generarNumeroRecibo() { const f = new Date(); return 'DF' + f.getFullYear() + String(f.getMonth()+1).padStart(2,'0') + String(f.getDate()).padStart(2,'0') + '-' + String(f.getHours()).padStart(2,'0') + String(f.getMinutes()).padStart(2,'0') + String(f.getSeconds()).padStart(2,'0'); }
 
-// ========================================
-// UTILIDADES GENERALES
-// ========================================
-
-/**
- * Debounce: retrasa la ejecución hasta que pasen ms sin nuevos calls
- */
-function debounce(fn, ms = 500) {
-    let timer;
-    return (...args) => {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), ms);
-    };
-}
-
-/**
- * Wrapper seguro para llamadas a Google API
- */
-async function safeGapiCall(fn, errorMsg = 'Error de conexión') {
-    try {
-        return await fn();
-    } catch (error) {
-        console.error(errorMsg, error);
-        throw new Error(`${errorMsg}: ${error.message}`);
-    }
-}
-
-/**
- * Muestra mensajes de resultado
- */
-function mostrarMensaje(el, msg, tipo) {
-    el.textContent = msg;
-    el.className = 'mensaje-resultado ' + tipo;
-    setTimeout(() => { el.className = 'mensaje-resultado'; el.textContent = ''; }, 5000);
-}
-
-/**
- * Genera número de recibo único
- */
-function generarNumeroRecibo() {
-    const f = new Date();
-    return 'DF' + f.getFullYear() + String(f.getMonth()+1).padStart(2,'0') + String(f.getDate()).padStart(2,'0') + '-' + String(f.getHours()).padStart(2,'0') + String(f.getMinutes()).padStart(2,'0') + String(f.getSeconds()).padStart(2,'0');
-}
-
-// ========================================
-// INICIALIZACIÓN DE GOOGLE API
-// ========================================
-function gapiLoaded() {
-    gapi.load('client', initializeGapiClient);
-    deshabilitarBotonLogin();
-    updateLoadingStep('step-gapi', 'active');
-}
-
-async function initializeGapiClient() {
+// Google API
+function gapiLoaded() { gapi.load('client', initGapi); updateLoading('Conectando con Google...'); }
+async function initGapi() {
     try {
         await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] });
-        gapiInited = true;
-        console.log('✅ Google API inicializada');
-        updateLoadingStep('step-gapi', 'done');
-        checkReady();
-    } catch (error) {
-        console.error(' Error inicializando GAPI:', error);
-        updateLoadingStep('step-gapi', 'error');
-    }
+        gapiInited = true; checkReady();
+    } catch (e) { console.error('Error GAPI:', e); updateLoading('Error de conexión'); }
 }
-
 function gisLoaded() {
-    tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        callback: handleTokenResponse,
-    });
-    gisInited = true;
-    console.log('✅ Google Identity Services cargado');
-    updateLoadingStep('step-gis', 'done');
-    checkReady();
+    tokenClient = google.accounts.oauth2.initTokenClient({ client_id: CLIENT_ID, scope: SCOPES, callback: handleToken });
+    gisInited = true; checkReady();
 }
-
-function updateLoadingStep(stepId, status) {
-    const step = document.getElementById(stepId);
-    if (!step) return;
-    step.className = 'loading-step ' + status;
+function updateLoading(text) {
+    const el = document.getElementById('loading-text');
+    if (el) el.textContent = text;
 }
-
 function checkReady() {
     if (gapiInited && gisInited) {
-        console.log('🎭 Sistema listo para autenticación');
-        habilitarBotonLogin();
-        updateLoadingStep('step-ready', 'active');
+        updateLoading('');
+        const loading = document.getElementById('login-loading');
+        if (loading) loading.classList.add('loading-complete');
+        const btn = document.getElementById('btn-google-login');
+        if (btn) btn.disabled = false;
     }
 }
-
-function habilitarBotonLogin() {
-    const btnGoogle = document.getElementById('btn-google-login');
-    if (!btnGoogle) return;
-    btnGoogle.disabled = false;
-    btnGoogle.style.opacity = '1';
-    btnGoogle.style.cursor = 'pointer';
-    
-    // Ocultar loading después de un momento
-    setTimeout(() => {
-        const loadingEl = document.getElementById('login-loading');
-        if (loadingEl) loadingEl.classList.add('loading-complete');
-    }, 1500);
+function handleToken(resp) {
+    if (resp.error) { alert('Error al iniciar sesión'); return; }
+    obtenerEmail();
 }
-
-function deshabilitarBotonLogin() {
-    const btnGoogle = document.getElementById('btn-google-login');
-    if (!btnGoogle) return;
-    btnGoogle.disabled = true;
-    btnGoogle.style.opacity = '0.5';
-    btnGoogle.style.cursor = 'not-allowed';
-}
-
-function handleTokenResponse(resp) {
-    if (resp.error !== undefined) {
-        console.error('Error de autenticación:', resp);
-        alert('Error al iniciar sesión con Google');
-        return;
-    }
-    usuarioGoogle = true;
-    console.log('✅ Autenticado con Google');
-    obtenerEmailUsuario();
-}
-
-async function obtenerEmailUsuario() {
+async function obtenerEmail() {
     try {
-        const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-            headers: { 'Authorization': 'Bearer ' + gapi.client.getToken().access_token }
-        });
-        const userInfo = await response.json();
-        emailUsuario = userInfo.email;
-        console.log('👤 Usuario:', emailUsuario);
-        const elUsuario = document.getElementById('usuario-logueado');
-        if (elUsuario) elUsuario.textContent = '👤 ' + emailUsuario;
+        const r = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', { headers: { 'Authorization': 'Bearer ' + gapi.client.getToken().access_token } });
+        const u = await r.json();
+        emailUsuario = u.email;
+        const el = document.getElementById('usuario-logueado');
+        if (el) el.textContent = '👤 ' + emailUsuario.split('@')[0];
         await verificarHojas();
-    } catch (error) {
-        console.error('Error obteniendo email:', error);
-        emailUsuario = 'desconocido';
-        await verificarHojas();
-    }
+    } catch (e) { emailUsuario = 'usuario'; await verificarHojas(); }
 }
 
-// ========================================
-// VERIFICAR Y CREAR HOJAS
-// ========================================
 async function verificarHojas() {
     try {
-        const response = await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.get({ spreadsheetId: spreadsheetId })
-        );
-
-        const hojas = response.result.sheets.map(s => s.properties.title);
-        console.log('Hojas existentes:', hojas);
-
-        if (!hojas.includes('Alquileres')) await crearHojaAlquileres();
-        if (!hojas.includes('ClientesHabituales')) await crearHojaClientes();
-
-        // Mostrar modal de clientes
-        const modalLogin = document.getElementById('modal-login');
-        const modalClientes = document.getElementById('modal-clientes');
-        if (modalLogin) modalLogin.classList.remove('active');
-        if (modalClientes) modalClientes.classList.add('active');
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.get({ spreadsheetId }));
+        const hojas = r.result.sheets.map(s => s.properties.title);
+        if (!hojas.includes('Alquileres')) await crearHoja('Alquileres', 'Nombre', 'Cedula', 'Celular', 'Disfraz', 'PrecioAlquiler', 'FechaAlquiler', 'FechaDevolucion', 'Condiciones', 'GarantiaDinero', 'GarantiaObjeto', 'DescripcionGarantia', 'Observaciones', 'Estado', 'FechaRegistro', 'CondicionesDevolucion', 'NotasDevolucion', 'FechaDevolucionReal', 'NumeroRecibo', 'RegistradoPor');
+        if (!hojas.includes('ClientesHabituales')) await crearHoja('ClientesHabituales', 'Nombre', 'Cedula', 'Celular', 'TotalAlquileres', 'UltimoAlquiler');
+        document.getElementById('modal-login').classList.remove('active');
+        document.getElementById('modal-clientes').classList.add('active');
         usuarioLogueado = true;
-
-    } catch (error) {
-        console.error('Error verificando hojas:', error);
-        alert('Error accediendo a la hoja de cálculo: ' + error.message);
-    }
+        cargarStats();
+    } catch (e) { alert('Error: ' + e.message); }
 }
 
-async function crearHojaAlquileres() {
-    await safeGapiCall(() =>
-        gapi.client.sheets.spreadsheets.batchUpdate({
-            spreadsheetId: spreadsheetId,
-            resource: { requests: [{ addSheet: { properties: { title: 'Alquileres' } } }] }
-        })
-    );
-
-    await safeGapiCall(() =>
-        gapi.client.sheets.spreadsheets.values.update({
-            spreadsheetId: spreadsheetId,
-            range: 'Alquileres!A1:S1',
-            valueInputOption: 'RAW',
-            resource: {
-                values: [['Nombre', 'Cedula', 'Celular', 'Disfraz', 'PrecioAlquiler', 'FechaAlquiler', 'FechaDevolucion', 'Condiciones', 'GarantiaDinero', 'GarantiaObjeto', 'DescripcionGarantia', 'Observaciones', 'Estado', 'FechaRegistro', 'CondicionesDevolucion', 'NotasDevolucion', 'FechaDevolucionReal', 'NumeroRecibo', 'RegistradoPor']]
-            }
-        })
-    );
-    console.log('✅ Hoja Alquileres creada');
+async function crearHoja(nombre, ...headers) {
+    await safeGapi(() => gapi.client.sheets.spreadsheets.batchUpdate({ spreadsheetId, resource: { requests: [{ addSheet: { properties: { title: nombre } } }] } }));
+    await safeGapi(() => gapi.client.sheets.spreadsheets.values.update({ spreadsheetId, range: nombre + '!A1:' + String.fromCharCode(64 + headers.length) + '1', valueInputOption: 'RAW', resource: { values: [headers] } }));
 }
 
-async function crearHojaClientes() {
-    await safeGapiCall(() =>
-        gapi.client.sheets.spreadsheets.batchUpdate({
-            spreadsheetId: spreadsheetId,
-            resource: { requests: [{ addSheet: { properties: { title: 'ClientesHabituales' } } }] }
-        })
-    );
+// Modales
+document.querySelectorAll('a[href^="#"]').forEach(a => a.addEventListener('click', function(e) { const h = this.getAttribute('href'); if (h !== '#') { e.preventDefault(); const t = document.querySelector(h); if (t) t.scrollIntoView({ behavior: 'smooth' }); } }));
 
-    await safeGapiCall(() =>
-        gapi.client.sheets.spreadsheets.values.update({
-            spreadsheetId: spreadsheetId,
-            range: 'ClientesHabituales!A1:E1',
-            valueInputOption: 'RAW',
-            resource: { values: [['Nombre', 'Cedula', 'Celular', 'TotalAlquileres', 'UltimoAlquiler']] }
-        })
-    );
-    console.log('✅ Hoja ClientesHabituales creada');
-}
+const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; } }), { threshold: 0.1 });
+document.querySelectorAll('.servicio-card, .disfraz-card, .contacto-card').forEach(c => { c.style.opacity = '0'; c.style.transform = 'translateY(20px)'; c.style.transition = 'opacity 0.6s, transform 0.6s'; observer.observe(c); });
 
-// ========================================
-// SMOOTH SCROLL
-// ========================================
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const href = this.getAttribute('href');
-        if (href !== '#') {
-            e.preventDefault();
-            const target = document.querySelector(href);
-            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    });
-});
+const modalLogin = document.getElementById('modal-login'), modalClientes = document.getElementById('modal-clientes'), modalRecibo = document.getElementById('modal-recibo');
+document.getElementById('btn-clientes').addEventListener('click', e => { e.preventDefault(); if (usuarioLogueado) modalClientes.classList.add('active'); else modalLogin.classList.add('active'); });
+document.querySelectorAll('.close-modal').forEach(b => b.addEventListener('click', () => { modalLogin.classList.remove('active'); modalClientes.classList.remove('active'); }));
+document.getElementById('btn-cerrar-recibo').addEventListener('click', () => modalRecibo.classList.remove('active'));
+window.addEventListener('click', e => { if (e.target === modalLogin || e.target === modalClientes || e.target === modalRecibo) { modalLogin.classList.remove('active'); modalClientes.classList.remove('active'); modalRecibo.classList.remove('active'); } });
 
-// ========================================
-// ANIMACIÓN AL SCROLL
-// ========================================
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.servicio-card, .disfraz-card, .contacto-card').forEach(card => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(20px)';
-    card.style.transition = 'opacity 0.6s, transform 0.6s';
-    observer.observe(card);
-});
-
-// ========================================
-// SISTEMA DE MODALES
-// ========================================
-const modalLogin = document.getElementById('modal-login');
-const modalClientes = document.getElementById('modal-clientes');
-const modalRecibo = document.getElementById('modal-recibo');
-const btnClientes = document.getElementById('btn-clientes');
-
-function cerrarTodosModales() {
-    [modalLogin, modalClientes, modalRecibo].forEach(m => {
-        if (m) m.classList.remove('active');
-    });
-}
-
-btnClientes.addEventListener('click', (e) => {
-    e.preventDefault();
-    if (usuarioLogueado && usuarioGoogle) {
-        modalClientes.classList.add('active');
-    } else {
-        modalLogin.classList.add('active');
-    }
-});
-
-document.querySelectorAll('.close-modal').forEach(btn => {
-    btn.addEventListener('click', cerrarTodosModales);
-});
-
-document.getElementById('btn-cerrar-recibo')?.addEventListener('click', () => {
-    modalRecibo.classList.remove('active');
-});
-
-window.addEventListener('click', (e) => {
-    if (e.target === modalLogin || e.target === modalClientes || e.target === modalRecibo) {
-        cerrarTodosModales();
-    }
-});
-
-// ========================================
-// LOGIN CON GOOGLE
-// ========================================
+// Login
 document.getElementById('btn-google-login').addEventListener('click', () => {
-    if (!gapiInited || !gisInited) {
-        return; // Botón está deshabilitado, no hacer nada
-    }
-
-    if (gapi.client.getToken() === null) {
-        tokenClient.requestAccessToken({ prompt: 'consent' });
-    } else {
-        tokenClient.requestAccessToken({ prompt: '' });
-    }
+    if (!gapiInited || !gisInited) return;
+    gapi.client.getToken() === null ? tokenClient.requestAccessToken({ prompt: 'consent' }) : tokenClient.requestAccessToken({ prompt: '' });
 });
-
 document.getElementById('btn-logout').addEventListener('click', () => {
-    const token = gapi.client.getToken();
-    if (token !== null) {
-        google.accounts.oauth2.revoke(token.access_token);
-        gapi.client.setToken('');
-    }
-    usuarioLogueado = false;
-    usuarioGoogle = false;
-    modalClientes.classList.remove('active');
+    const t = gapi.client.getToken(); if (t) { google.accounts.oauth2.revoke(t.access_token); gapi.client.setToken(''); }
+    usuarioLogueado = false; modalClientes.classList.remove('active');
 });
 
-// ========================================
-// SISTEMA DE TABS
-// ========================================
-document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        btn.classList.add('active');
-        const tabId = 'tab-' + btn.dataset.tab;
-        document.getElementById(tabId)?.classList.add('active');
-    });
-});
+// Tabs
+document.querySelectorAll('.tab-btn').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    const tab = document.getElementById('tab-' + b.dataset.tab);
+    if (tab) tab.classList.add('active');
+}));
 
-// ========================================
-// AUTOCOMPLETADO CLIENTES HABITUALES
-// ========================================
+// Cliente Habitual - Debounced
 async function buscarClienteHabitual(cedula) {
     try {
-        const [resClientes, resAlquileres] = await Promise.all([
-            safeGapiCall(() => gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'ClientesHabituales!A:E'
-            })),
-            safeGapiCall(() => gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'Alquileres!A:M'
-            }))
+        const [rc, ra] = await Promise.all([
+            safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'ClientesHabituales!A:E' })),
+            safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'Alquileres!A:M' }))
         ]);
-
         document.getElementById('cedula-loader').style.display = 'none';
-
-        const rowsClientes = resClientes.result.values || [];
-        const rowsAlquileres = resAlquileres.result.values || [];
-
-        // Buscar alquileres pendientes
-        const alquileresPendientes = rowsAlquileres
-            .slice(1)
-            .filter(row => row[1]?.toString() === cedula && row[12] === 'Alquilado')
-            .map(row => ({ disfraz: row[3], fechaDevolucion: row[6] }));
-
-        // Buscar cliente habitual
-        let clienteEncontrado = false;
-        for (let i = 1; i < rowsClientes.length; i++) {
-            if (rowsClientes[i][1]?.toString() === cedula) {
-                document.getElementById('nombre-cliente').value = rowsClientes[i][0] || '';
-                document.getElementById('celular').value = rowsClientes[i][2] || '';
-                const totalAlquileres = rowsClientes[i][3] || 0;
-
-                const alertEl = document.getElementById('cliente-habitual-alert');
-                alertEl.innerHTML = `<span class="alert-icon">⭐</span>
-                    <span class="alert-text">Cliente frecuente - <strong class="alert-alquileres">${totalAlquileres} alquileres</strong></span>`;
-                alertEl.style.display = 'flex';
-                alertEl.className = 'cliente-habitual-alert';
-                clienteEncontrado = true;
-                break;
-            }
-        }
-
-        // Alerta de deudas
-        const deudasEl = document.getElementById('alerta-deudas');
-        if (alquileresPendientes.length > 0) {
-            let deudaHTML = '<div class="alerta-deuda"><span class="deuda-icon">⚠️</span>';
-            deudaHTML += `<span class="deuda-titulo">¡ATENCIÓN! Cliente con ${alquileresPendientes.length} disfraz(es) sin devolver:</span>`;
-            deudaHTML += '<ul class="deuda-lista">';
-            alquileresPendientes.forEach(a => {
-                deudaHTML += `<li>🎭 <strong>${a.disfraz}</strong> - Devolver: ${a.fechaDevolucion}</li>`;
-            });
-            deudaHTML += '</ul></div>';
-            deudasEl.innerHTML = deudaHTML;
-            deudasEl.style.display = 'block';
-        } else {
-            deudasEl.style.display = 'none';
-            deudasEl.innerHTML = '';
-        }
-
-        if (!clienteEncontrado && alquileresPendientes.length === 0) {
-            document.getElementById('cliente-habitual-alert').style.display = 'none';
-        }
-
-    } catch (error) {
-        document.getElementById('cedula-loader').style.display = 'none';
-        console.error('Error buscando cliente:', error);
-    }
+        const pendientes = (ra.result.values || []).slice(1).filter(r => r[1]?.toString() === cedula && r[12] === 'Alquilado').map(r => ({ disfraz: r[3], fecha: r[6] }));
+        const cliente = (rc.result.values || []).slice(1).find(r => r[1]?.toString() === cedula);
+        if (cliente) {
+            document.getElementById('nombre-cliente').value = cliente[0] || '';
+            document.getElementById('celular').value = cliente[2] || '';
+            const alert = document.getElementById('cliente-habitual-alert');
+            alert.innerHTML = `<span class="alert-icon">⭐</span><span class="alert-text">Cliente frecuente</span><span class="alert-alquileres">${cliente[3] || 0} alquileres</span>`;
+            alert.style.display = 'flex';
+        } else { document.getElementById('cliente-habitual-alert').style.display = 'none'; }
+        const deudas = document.getElementById('alerta-deudas');
+        if (pendientes.length > 0) {
+            deudas.innerHTML = `<div class="alerta-deuda">⚠️ <strong>${pendientes.length} disfraz(es) pendiente(s):</strong><ul class="deuda-lista">${pendientes.map(p => `<li> ${p.disfraz} - Debía: ${p.fecha}</li>`).join('')}</ul></div>`;
+            deudas.style.display = 'block';
+        } else { deudas.style.display = 'none'; }
+    } catch (e) { document.getElementById('cedula-loader').style.display = 'none'; console.error(e); }
 }
 
-// Debounced version
-const buscarClienteHabitualDebounced = debounce(buscarClienteHabitual, 800);
-
+const buscarDebounced = debounce(buscarClienteHabitual, 600);
 document.getElementById('cedula').addEventListener('input', function() {
-    const cedula = this.value.trim();
-    const loader = document.getElementById('cedula-loader');
-
-    if (cedula.length >= 5) {
-        loader.style.display = 'inline';
-        buscarClienteHabitualDebounced(cedula);
-    } else {
-        loader.style.display = 'none';
-        document.getElementById('cliente-habitual-alert').style.display = 'none';
-        document.getElementById('alerta-deudas').style.display = 'none';
-    }
+    const v = this.value.trim();
+    document.getElementById('cedula-loader').style.display = v.length >= 5 ? 'inline' : 'none';
+    if (v.length >= 5) buscarDebounced(v);
+    else { document.getElementById('cliente-habitual-alert').style.display = 'none'; document.getElementById('alerta-deudas').style.display = 'none'; }
 });
 
-// ========================================
-// REGISTRO DE CLIENTES
-// ========================================
-const formRegistro = document.getElementById('form-registro');
-const mensajeRegistro = document.getElementById('mensaje-registro');
-const btnImprimirRecibo = document.getElementById('btn-imprimir-recibo');
-
-formRegistro.addEventListener('submit', async (e) => {
+// Registrar
+document.getElementById('form-registro').addEventListener('submit', async e => {
     e.preventDefault();
-
-    const btnRegistrar = formRegistro.querySelector('.btn-registrar');
-    const btnText = btnRegistrar.querySelector('.btn-text');
-    const btnLoading = btnRegistrar.querySelector('.btn-loading');
-
-    btnText.style.display = 'none';
-    btnLoading.style.display = 'inline';
-    btnRegistrar.disabled = true;
-
-    const numRecibo = generarNumeroRecibo();
-    const fechaRegistro = new Date().toLocaleString('es-BO');
-
+    const btn = e.target.querySelector('.btn-registrar');
+    btn.querySelector('.btn-text').style.display = 'none';
+    btn.querySelector('.btn-loading').style.display = 'inline';
+    btn.disabled = true;
     const datos = {
-        nombre: document.getElementById('nombre-cliente').value,
-        cedula: document.getElementById('cedula').value,
-        celular: document.getElementById('celular').value,
-        disfraz: document.getElementById('disfraz').value,
-        precioAlquiler: document.getElementById('precio-alquiler').value || '0',
-        fechaAlquiler: document.getElementById('fecha-alquiler').value,
-        fechaDevolucion: document.getElementById('fecha-devolucion').value,
-        condiciones: document.getElementById('condiciones').value,
-        garantiaDinero: document.getElementById('garantia-dinero').value || '0',
-        garantiaObjeto: document.getElementById('garantia-objeto').value || '',
-        descripcionGarantia: document.getElementById('descripcion-garantia').value || '',
-        observaciones: document.getElementById('observaciones').value || '',
-        estado: 'Alquilado',
-        fechaRegistro,
-        numeroRecibo: numRecibo
+        nombre: document.getElementById('nombre-cliente').value, cedula: document.getElementById('cedula').value,
+        celular: document.getElementById('celular').value, disfraz: document.getElementById('disfraz').value,
+        precio: document.getElementById('precio-alquiler').value || '0', fechaAlq: document.getElementById('fecha-alquiler').value,
+        fechaDev: document.getElementById('fecha-devolucion').value, condiciones: document.getElementById('condiciones').value,
+        garantiaDin: document.getElementById('garantia-dinero').value || '0', garantiaObj: document.getElementById('garantia-objeto').value || '',
+        descGar: document.getElementById('descripcion-garantia').value || '', obs: document.getElementById('observaciones').value || '',
+        recibo: generarNumeroRecibo()
     };
-
     try {
-        await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.append({
-                spreadsheetId: spreadsheetId,
-                range: 'Alquileres!A:S',
-                valueInputOption: 'RAW',
-                insertDataOption: 'INSERT_ROWS',
-                resource: {
-                    values: [[
-                        datos.nombre, datos.cedula, datos.celular, datos.disfraz,
-                        datos.precioAlquiler, datos.fechaAlquiler, datos.fechaDevolucion,
-                        datos.condiciones, datos.garantiaDinero, datos.garantiaObjeto,
-                        datos.descripcionGarantia, datos.observaciones, datos.estado,
-                        datos.fechaRegistro, '', '', '', datos.numeroRecibo, emailUsuario
-                    ]]
-                }
-            })
-        );
-
-        await actualizarClienteHabitual(datos);
+        await safeGapi(() => gapi.client.sheets.spreadsheets.values.append({ spreadsheetId, range: 'Alquileres!A:S', valueInputOption: 'RAW', insertDataOption: 'INSERT_ROWS', resource: { values: [[datos.nombre, datos.cedula, datos.celular, datos.disfraz, datos.precio, datos.fechaAlq, datos.fechaDev, datos.condiciones, datos.garantiaDin, datos.garantiaObj, datos.descGar, datos.obs, 'Alquilado', new Date().toLocaleString('es-BO'), '', '', '', datos.recibo, emailUsuario]] } }));
+        await actualizarCliente(datos);
         ultimoRegistro = datos;
-        mostrarMensaje(mensajeRegistro, '✅ ¡Registro guardado exitosamente!', 'exito');
-        btnImprimirRecibo.style.display = 'inline-block';
-
-    } catch (error) {
-        console.error('Error guardando registro:', error);
-        mostrarMensaje(mensajeRegistro, '❌ Error: ' + error.message, 'error');
-    }
-
-    btnText.style.display = 'inline';
-    btnLoading.style.display = 'none';
-    btnRegistrar.disabled = false;
+        mostrarMensaje(document.getElementById('mensaje-registro'), '✅ ¡Registro guardado!', 'exito');
+        document.getElementById('btn-imprimir-recibo').style.display = 'inline-block';
+        cargarStats();
+    } catch (err) { mostrarMensaje(document.getElementById('mensaje-registro'), '❌ ' + err.message, 'error'); }
+    btn.querySelector('.btn-text').style.display = 'inline';
+    btn.querySelector('.btn-loading').style.display = 'none';
+    btn.disabled = false;
 });
 
-async function actualizarClienteHabitual(datos) {
+async function actualizarCliente(d) {
     try {
-        const response = await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'ClientesHabituales!A:E'
-            })
-        );
-
-        const rows = response.result.values || [];
-        let filaEncontrada = -1;
-
-        for (let i = 1; i < rows.length; i++) {
-            if (rows[i][1]?.toString() === datos.cedula) {
-                filaEncontrada = i + 1;
-                break;
-            }
-        }
-
-        const fechaHoy = datos.fechaAlquiler || new Date().toISOString().split('T')[0];
-
-        if (filaEncontrada > 0) {
-            const totalActual = parseInt(rows[filaEncontrada - 1][3]) || 0;
-            await safeGapiCall(() =>
-                gapi.client.sheets.spreadsheets.values.update({
-                    spreadsheetId: spreadsheetId,
-                    range: `ClientesHabituales!A${filaEncontrada}:E${filaEncontrada}`,
-                    valueInputOption: 'RAW',
-                    resource: { values: [[datos.nombre, datos.cedula, datos.celular, totalActual + 1, fechaHoy]] }
-                })
-            );
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'ClientesHabituales!A:E' }));
+        const rows = r.result.values || [];
+        let fila = -1;
+        for (let i = 1; i < rows.length; i++) { if (rows[i][1]?.toString() === d.cedula) { fila = i + 1; break; } }
+        const total = fila > 0 ? (parseInt(rows[fila-1][3]) || 0) + 1 : 1;
+        if (fila > 0) {
+            await safeGapi(() => gapi.client.sheets.spreadsheets.values.update({ spreadsheetId, range: `ClientesHabituales!A${fila}:E${fila}`, valueInputOption: 'RAW', resource: { values: [[d.nombre, d.cedula, d.celular, total, d.fechaAlq]] } }));
         } else {
-            await safeGapiCall(() =>
-                gapi.client.sheets.spreadsheets.values.append({
-                    spreadsheetId: spreadsheetId,
-                    range: 'ClientesHabituales!A:E',
-                    valueInputOption: 'RAW',
-                    insertDataOption: 'INSERT_ROWS',
-                    resource: { values: [[datos.nombre, datos.cedula, datos.celular, 1, fechaHoy]] }
-                })
-            );
+            await safeGapi(() => gapi.client.sheets.spreadsheets.values.append({ spreadsheetId, range: 'ClientesHabituales!A:E', valueInputOption: 'RAW', insertDataOption: 'INSERT_ROWS', resource: { values: [[d.nombre, d.cedula, d.celular, 1, d.fechaAlq]] } }));
         }
-    } catch (error) {
-        console.error('Error actualizando cliente habitual:', error);
-    }
+    } catch (e) { console.error(e); }
 }
 
-formRegistro.addEventListener('reset', () => {
-    btnImprimirRecibo.style.display = 'none';
+document.getElementById('form-registro').addEventListener('reset', () => {
+    document.getElementById('btn-imprimir-recibo').style.display = 'none';
     document.getElementById('cliente-habitual-alert').style.display = 'none';
     document.getElementById('alerta-deudas').style.display = 'none';
-    mensajeRegistro.className = 'mensaje-resultado';
-    setTimeout(() => {
-        const fechaInput = document.getElementById('fecha-alquiler');
-        if (fechaInput) fechaInput.value = new Date().toISOString().split('T')[0];
-    }, 100);
+    document.getElementById('mensaje-registro').className = 'mensaje-resultado';
 });
 
-// ========================================
-// IMPRIMIR RECIBO
-// ========================================
-btnImprimirRecibo.addEventListener('click', () => mostrarRecibo(ultimoRegistro));
+// Recibo
+document.getElementById('btn-imprimir-recibo').addEventListener('click', () => mostrarRecibo(ultimoRegistro));
 document.getElementById('btn-print-recibo').addEventListener('click', () => window.print());
 
-function mostrarRecibo(datos) {
-    if (!datos) return;
-
-    const contenido = document.getElementById('recibo-contenido');
-    const fechaHora = new Date();
-    const fechaFormateada = fechaHora.toLocaleDateString('es-BO', { day: 'numeric', month: 'long', year: 'numeric' });
-    const horaFormateada = fechaHora.toLocaleTimeString('es-BO', { hour: '2-digit', minute: '2-digit' });
-
-    contenido.innerHTML = `
-        <div class="recibo-header">
-            <div class="recibo-brand">DISFRACES FANTASÍA</div>
-            <div class="recibo-sub">Ayacucho, Oruro • 76133121</div>
-        </div>
-        <div class="recibo-numero">N° ${datos.numeroRecibo}</div>
-        <div class="recibo-cliente">
-            <div class="cliente-nombre">${datos.nombre}</div>
-            <div class="cliente-dato">CI: ${datos.cedula} • Cel: ${datos.celular}</div>
-        </div>
-        <div class="recibo-disfraz">
-            <div class="disfraz-nombre">${datos.disfraz}</div>
-            <div class="disfraz-estado">${datos.condiciones}</div>
-        </div>
-        <div class="recibo-fechas">
-            <div class="fecha-item"><div class="fecha-label">Alquiler</div><div class="fecha-valor">${datos.fechaAlquiler}</div></div>
-            <div class="fecha-item"><div class="fecha-label">Devolución</div><div class="fecha-valor">${datos.fechaDevolucion}</div></div>
-        </div>
-        <div class="recibo-garantia">
-            <div class="garantia-label">Garantía</div>
-            <div class="garantia-valor">Bs. ${datos.garantiaDinero || '0'}${datos.garantiaObjeto ? ' + ' + datos.garantiaObjeto : ''}</div>
-        </div>
-        <div class="recibo-total">
-            <div class="total-label">ALQUILER</div>
-            <div class="total-monto">Bs. ${datos.precioAlquiler || '0'}</div>
-        </div>
-        <div class="recibo-firma">
-            <div class="firma-linea"></div>
-            <div class="firma-texto">Firma del Cliente</div>
-        </div>
-        <div class="recibo-condiciones">
-            Me comprometo a devolver el disfraz en la fecha acordada y en buen estado. En caso de daño o pérdida, asumo el costo total de reposición. La garantía será devuelta al entregar el disfraz en buenas condiciones.
-        </div>
-        <div class="recibo-footer">
-            <div class="footer-gracias">¡¡GRACIAS POR SU PREFERENCIA!!</div>
-            <div class="footer-fecha">${fechaFormateada} • ${horaFormateada}</div>
-        </div>
-    `;
-
+function mostrarRecibo(d) {
+    if (!d) return;
+    const f = new Date();
+    document.getElementById('recibo-contenido').innerHTML = `
+        <div class="recibo-header"><div class="recibo-brand">DISFRACES FANTASÍA</div><div class="recibo-sub">Ayacucho, Oruro • 76133121</div></div>
+        <div class="recibo-numero">N° ${d.recibo || d.numeroRecibo || ''}</div>
+        <div class="recibo-cliente"><div class="cliente-nombre">${d.nombre}</div><div class="cliente-dato">CI: ${d.cedula} • Cel: ${d.celular}</div></div>
+        <div class="recibo-disfraz"><div class="disfraz-nombre">${d.disfraz}</div><div class="disfraz-estado">${d.condiciones}</div></div>
+        <div class="recibo-fechas"><div class="fecha-item"><div class="fecha-label">Alquiler</div><div class="fecha-valor">${d.fechaAlquiler || d.fechaAlq}</div></div><div class="fecha-item"><div class="fecha-label">Devolución</div><div class="fecha-valor">${d.fechaDevolucion || d.fechaDev}</div></div></div>
+        <div class="recibo-garantia"><div class="garantia-label">Garantía</div><div class="garantia-valor">Bs. ${d.garantiaDinero || d.garantiaDin || '0'}${(d.garantiaObjeto || d.garantiaObj) ? ' + ' + (d.garantiaObjeto || d.garantiaObj) : ''}</div></div>
+        <div class="recibo-total"><div class="total-label">ALQUILER</div><div class="total-monto">Bs. ${d.precioAlquiler || d.precio || '0'}</div></div>
+        <div class="recibo-firma"><div class="firma-linea"></div><div class="firma-texto">Firma del Cliente</div></div>
+        <div class="recibo-condiciones">Me comprometo a devolver el disfraz en la fecha acordada. En caso de daño o pérdida, asumo el costo total. La garantía será devuelta al entregar en buen estado.</div>
+        <div class="recibo-footer"><div class="footer-gracias">¡¡GRACIAS POR SU PREFERENCIA!!</div><div class="footer-fecha">${f.toLocaleDateString('es-BO')} • ${f.toLocaleTimeString('es-BO', {hour:'2-digit',minute:'2-digit'})}</div></div>`;
     modalRecibo.classList.add('active');
 }
 
-// ========================================
-// BÚSQUEDA DE CLIENTES
-// ========================================
+// Búsqueda
 document.getElementById('btn-buscar').addEventListener('click', buscarCliente);
-document.getElementById('buscar-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') buscarCliente();
-});
+document.getElementById('buscar-input').addEventListener('keypress', e => { if (e.key === 'Enter') buscarCliente(); });
 
 async function buscarCliente() {
-    const termino = document.getElementById('buscar-input').value.trim().toLowerCase();
-    const resultados = document.getElementById('resultados-busqueda');
-
-    if (!termino) {
-        resultados.innerHTML = '<p class="placeholder-text">Ingresa un nombre o cédula</p>';
-        return;
-    }
-
-    resultados.innerHTML = '<div class="loading">Buscando...</div>';
-
+    const t = document.getElementById('buscar-input').value.trim().toLowerCase();
+    const res = document.getElementById('resultados-busqueda');
+    if (!t) { res.innerHTML = '<p class="placeholder-text">Escribe para buscar</p>'; return; }
+    res.innerHTML = '<div class="loading">Buscando</div>';
     try {
-        const response = await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'Alquileres!A:R'
-            })
-        );
-
-        const rows = response.result.values || [];
-        const encontrados = [];
-
-        for (let i = 1; i < rows.length; i++) {
-            const nombre = (rows[i][0] || '').toLowerCase();
-            const cedula = (rows[i][1] || '').toLowerCase();
-
-            if (nombre.includes(termino) || cedula.includes(termino)) {
-                encontrados.push({
-                    fila: i + 1,
-                    nombre: rows[i][0], cedula: rows[i][1], celular: rows[i][2],
-                    disfraz: rows[i][3], precioAlquiler: rows[i][4],
-                    fechaAlquiler: rows[i][5], fechaDevolucion: rows[i][6],
-                    condiciones: rows[i][7], garantiaDinero: rows[i][8],
-                    garantiaObjeto: rows[i][9], descripcionGarantia: rows[i][10],
-                    observaciones: rows[i][11], estado: rows[i][12],
-                    numeroRecibo: rows[i][17]
-                });
-            }
-        }
-
-        if (encontrados.length > 0) {
-            mostrarResultados(encontrados);
-        } else {
-            resultados.innerHTML = '<p class="placeholder-text">No se encontraron registros</p>';
-        }
-
-    } catch (error) {
-        console.error('Error buscando cliente:', error);
-        resultados.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
-    }
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'Alquileres!A:R' }));
+        const encontrados = (r.result.values || []).slice(1).filter(row => (row[0]||'').toLowerCase().includes(t) || (row[1]||'').toLowerCase().includes(t))
+            .map((row, i) => ({ fila: i+2, nombre: row[0], cedula: row[1], celular: row[2], disfraz: row[3], precio: row[4], fechaAlq: row[5], fechaDev: row[6], condiciones: row[7], garantiaDin: row[8], garantiaObj: row[9], descGar: row[10], obs: row[11], estado: row[12], recibo: row[17] }));
+        if (encontrados.length > 0) { mostrarResultados(encontrados); }
+        else { res.innerHTML = '<p class="placeholder-text">No se encontraron resultados</p>'; }
+    } catch (e) { res.innerHTML = '<p class="placeholder-text">Error de conexión</p>'; }
 }
 
 function mostrarResultados(datos) {
-    const html = datos.map(r => {
-        const esAlquilado = r.estado === 'Alquilado';
-        return `
-            <div class="resultado-card ${esAlquilado ? 'alquilado' : 'devuelto'}">
-                <div class="resultado-header">
-                    <span class="resultado-nombre">👤 ${r.nombre}</span>
-                    <span class="resultado-estado ${esAlquilado ? 'estado-alquilado' : 'estado-devuelto'}">
-                        ${esAlquilado ? '🔴 Alquilado' : '🟢 Devuelto'}
-                    </span>
-                </div>
-                <div class="resultado-info">
-                    <span><strong>CI:</strong> ${r.cedula}</span>
-                    <span><strong>Cel:</strong> ${r.celular}</span>
-                    <span><strong>Disfraz:</strong> ${r.disfraz}</span>
-                    <span><strong>Precio:</strong> Bs. ${r.precioAlquiler || '0'}</span>
-                    <span><strong>Alquiler:</strong> ${r.fechaAlquiler}</span>
-                    <span><strong>Devolución:</strong> ${r.fechaDevolucion}</span>
-                    <span><strong>Garantía $:</strong> Bs. ${r.garantiaDinero || '0'}</span>
-                    ${r.garantiaObjeto ? `<span><strong>Garantía Obj:</strong> ${r.garantiaObjeto}</span>` : ''}
-                </div>
-                <div class="resultado-actions">
-                    ${esAlquilado ? `<button class="btn-devolucion" onclick="iniciarDevolucion(${r.fila}, '${r.nombre.replace(/'/g, "\\'")}', '${r.disfraz.replace(/'/g, "\\'")}', '${r.garantiaDinero}', '${(r.garantiaObjeto || '').replace(/'/g, "\\'")}')">📦 Devolución</button>` : ''}
-                    <button class="btn-recibo-busqueda" onclick="mostrarRecibo({nombre:'${r.nombre.replace(/'/g, "\\'")}',cedula:'${r.cedula}',celular:'${r.celular}',disfraz:'${r.disfraz.replace(/'/g, "\\'")}',precioAlquiler:'${r.precioAlquiler}',fechaAlquiler:'${r.fechaAlquiler}',fechaDevolucion:'${r.fechaDevolucion}',condiciones:'${r.condiciones}',garantiaDinero:'${r.garantiaDinero}',garantiaObjeto:'${(r.garantiaObjeto || '').replace(/'/g, "\\'")}',descripcionGarantia:'${(r.descripcionGarantia || '').replace(/'/g, "\\'")}',numeroRecibo:'${r.numeroRecibo || ''}'})">🖨️ Recibo</button>
-                </div>
+    document.getElementById('resultados-busqueda').innerHTML = datos.map(r => `
+        <div class="resultado-card ${r.estado === 'Alquilado' ? 'alquilado' : 'devuelto'}">
+            <div class="resultado-header"><span class="resultado-nombre"> ${r.nombre}</span><span class="resultado-estado ${r.estado === 'Alquilado' ? 'estado-alquilado' : 'estado-devuelto'}">${r.estado === 'Alquilado' ? '' : '🟢'} ${r.estado}</span></div>
+            <div class="resultado-info"><span><strong>CI:</strong> ${r.cedula}</span><span><strong>Cel:</strong> ${r.celular}</span><span><strong>Disfraz:</strong> ${r.disfraz}</span><span><strong>Precio:</strong> Bs. ${r.precio || '0'}</span><span><strong>Alquiler:</strong> ${r.fechaAlq}</span><span><strong>Dev:</strong> ${r.fechaDev}</span></div>
+            <div class="resultado-actions">
+                ${r.estado === 'Alquilado' ? `<button class="btn-devolucion" onclick="iniciarDevolucion(${r.fila},'${r.nombre.replace(/'/g,"\\'")}','${r.disfraz.replace(/'/g,"\\'")}','${r.garantiaDin}','${(r.garantiaObj||'').replace(/'/g,"\\'")}')">📦 Devolución</button>` : ''}
+                <button class="btn-recibo-busqueda" onclick="mostrarRecibo({nombre:'${r.nombre.replace(/'/g,"\\'")}',cedula:'${r.cedula}',celular:'${r.celular}',disfraz:'${r.disfraz.replace(/'/g,"\\'")}',precioAlquiler:'${r.precio}',fechaAlquiler:'${r.fechaAlq}',fechaDevolucion:'${r.fechaDev}',condiciones:'${r.condiciones}',garantiaDinero:'${r.garantiaDin}',garantiaObjeto:'${(r.garantiaObj||'').replace(/'/g,"\\'")}',descripcionGarantia:'${(r.descGar||'').replace(/'/g,"\\'")}',numeroRecibo:'${r.recibo||''}'})">🖨️ Recibo</button>
             </div>
-        `;
-    }).join('');
-
-    document.getElementById('resultados-busqueda').innerHTML = html;
+        </div>`).join('');
 }
 
-// ========================================
-// DEVOLUCIÓN
-// ========================================
-function iniciarDevolucion(fila, nombre, disfraz, garantiaDinero, garantiaObjeto) {
-    registroSeleccionado = { fila, nombre, disfraz, garantiaDinero, garantiaObjeto };
-
-    document.getElementById('info-devolucion').innerHTML =
-        `<strong>Cliente:</strong> ${nombre}<br><strong>Disfraz:</strong> ${disfraz}`;
-
-    let garantiaTexto = '';
-    if (garantiaDinero && parseFloat(garantiaDinero) > 0) garantiaTexto += `💵 Dinero: Bs. ${garantiaDinero}<br>`;
-    if (garantiaObjeto) garantiaTexto += `📦 Objeto: ${garantiaObjeto}`;
-
-    document.getElementById('garantia-devolver-texto').innerHTML = garantiaTexto || 'Sin garantía';
+// Devolución
+function iniciarDevolucion(fila, nombre, disfraz, gDin, gObj) {
+    registroSeleccionado = { fila, nombre, disfraz, gDin, gObj };
+    document.getElementById('info-devolucion').innerHTML = `<strong>${nombre}</strong><br>${disfraz}`;
+    document.getElementById('garantia-devolver-texto').innerHTML = (gDin && parseFloat(gDin) > 0 ? `💵 Bs. ${gDin}` : '') + (gObj ? `  ${gObj}` : '') || 'Sin garantía';
     document.getElementById('modal-devolucion').style.display = 'block';
 }
-
-document.getElementById('btn-cancelar-devolucion').addEventListener('click', () => {
-    document.getElementById('modal-devolucion').style.display = 'none';
-    registroSeleccionado = null;
-});
-
+document.getElementById('btn-cancelar-devolucion').addEventListener('click', () => { document.getElementById('modal-devolucion').style.display = 'none'; registroSeleccionado = null; });
 document.getElementById('btn-confirmar-devolucion').addEventListener('click', async () => {
     if (!registroSeleccionado) return;
-
     const btn = document.getElementById('btn-confirmar-devolucion');
-    btn.disabled = true;
-    btn.textContent = '⏳ Procesando...';
-
+    btn.disabled = true; btn.textContent = '⏳...';
     try {
-        await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.update({
-                spreadsheetId: spreadsheetId,
-                range: `Alquileres!M${registroSeleccionado.fila}`,
-                valueInputOption: 'RAW',
-                resource: { values: [['Devuelto']] }
-            })
-        );
-
-        await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.update({
-                spreadsheetId: spreadsheetId,
-                range: `Alquileres!O${registroSeleccionado.fila}:Q${registroSeleccionado.fila}`,
-                valueInputOption: 'RAW',
-                resource: { values: [[
-                    document.getElementById('condiciones-devolucion').value,
-                    document.getElementById('notas-devolucion').value,
-                    new Date().toLocaleString('es-BO')
-                ]] }
-            })
-        );
-
-        alert('✅ Devolución registrada.\n\n⚠️ DEVOLVER GARANTÍA:\n💵 Bs. ' +
-            (registroSeleccionado.garantiaDinero || '0') + '\n📦 ' +
-            (registroSeleccionado.garantiaObjeto || 'Ninguno'));
-
+        await safeGapi(() => gapi.client.sheets.spreadsheets.values.update({ spreadsheetId, range: `Alquileres!M${registroSeleccionado.fila}`, valueInputOption: 'RAW', resource: { values: [['Devuelto']] } }));
+        await safeGapi(() => gapi.client.sheets.spreadsheets.values.update({ spreadsheetId, range: `Alquileres!O${registroSeleccionado.fila}:Q${registroSeleccionado.fila}`, valueInputOption: 'RAW', resource: { values: [[document.getElementById('condiciones-devolucion').value, document.getElementById('notas-devolucion').value, new Date().toLocaleString('es-BO')]] } }));
+        alert('✅ Devolución registrada');
         document.getElementById('modal-devolucion').style.display = 'none';
-        document.getElementById('notas-devolucion').value = '';
-        buscarCliente();
-
-    } catch (error) {
-        console.error('Error en devolución:', error);
-        alert('❌ Error: ' + error.message);
-    }
-
-    btn.disabled = false;
-    btn.textContent = '✅ Confirmar';
+        buscarCliente(); cargarStats();
+    } catch (e) { alert('❌ ' + e.message); }
+    btn.disabled = false; btn.textContent = '✅ Confirmar';
     registroSeleccionado = null;
 });
 
-// ========================================
-// HISTORIAL
-// ========================================
+// Historial
 document.getElementById('btn-cargar-historial').addEventListener('click', cargarHistorial);
 document.getElementById('filtro-estado').addEventListener('change', cargarHistorial);
 
 async function cargarHistorial() {
     const tabla = document.getElementById('tabla-historial');
-    tabla.innerHTML = '<div class="loading">Cargando...</div>';
-
+    tabla.innerHTML = '<div class="loading">Cargando</div>';
     const filtro = document.getElementById('filtro-estado').value;
-
     try {
-        const response = await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'Alquileres!A:R'
-            })
-        );
-
-        const rows = response.result.values || [];
-        const datos = [];
-
-        for (let i = 1; i < rows.length; i++) {
-            const estado = rows[i][12];
-            if (filtro === 'todos' || estado === filtro) {
-                datos.push({
-                    nombre: rows[i][0], cedula: rows[i][1], disfraz: rows[i][3],
-                    precioAlquiler: rows[i][4], garantiaDinero: rows[i][8],
-                    garantiaObjeto: rows[i][9], estado
-                });
-            }
-        }
-
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'Alquileres!A:R' }));
+        const datos = (r.result.values || []).slice(1).filter(row => filtro === 'todos' || row[12] === filtro)
+            .map(row => ({ nombre: row[0], cedula: row[1], disfraz: row[3], precio: row[4], gDin: row[8], gObj: row[9], estado: row[12] })).reverse();
         if (datos.length > 0) {
-            datos.reverse();
-            mostrarHistorial(datos);
-        } else {
-            tabla.innerHTML = '<p class="placeholder-text">No hay registros</p>';
-        }
-
-    } catch (error) {
-        console.error('Error cargando historial:', error);
-        tabla.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
-    }
+            tabla.innerHTML = `<table class="tabla-registros"><thead><tr><th>Nombre</th><th>CI</th><th>Disfraz</th><th>Precio</th><th>Garantía</th><th>Estado</th></tr></thead><tbody>${datos.map(r => `<tr><td>${r.nombre}</td><td>${r.cedula}</td><td>${r.disfraz}</td><td>Bs. ${r.precio||'0'}</td><td>Bs. ${r.gDin||'0'} ${r.gObj?'+'+r.gObj:''}</td><td><span class="resultado-estado ${r.estado==='Alquilado'?'estado-alquilado':'estado-devuelto'}">${r.estado==='Alquilado'?'🔴':'🟢'}</span></td></tr>`).join('')}</tbody></table>`;
+        } else { tabla.innerHTML = '<p class="placeholder-text">No hay registros</p>'; }
+    } catch (e) { tabla.innerHTML = '<p class="placeholder-text">Error</p>'; }
 }
 
-function mostrarHistorial(datos) {
-    let html = `<table class="tabla-registros"><thead><tr>
-        <th>Nombre</th><th>CI</th><th>Disfraz</th><th>Precio</th><th>Garantía</th><th>Estado</th>
-    </tr></thead><tbody>`;
-
-    datos.forEach(r => {
-        const estadoClass = r.estado === 'Alquilado' ? 'estado-alquilado' : 'estado-devuelto';
-        const estadoIcon = r.estado === 'Alquilado' ? '🔴' : '🟢';
-        html += `<tr>
-            <td>${r.nombre}</td><td>${r.cedula}</td><td>${r.disfraz}</td>
-            <td>Bs. ${r.precioAlquiler || '0'}</td>
-            <td>Bs. ${r.garantiaDinero || '0'} ${r.garantiaObjeto ? '+ ' + r.garantiaObjeto : ''}</td>
-            <td><span class="resultado-estado ${estadoClass}">${estadoIcon} ${r.estado}</span></td>
-        </tr>`;
-    });
-
-    html += '</tbody></table>';
-    document.getElementById('tabla-historial').innerHTML = html;
-}
-
-// ========================================
-// CLIENTES HABITUALES
-// ========================================
-document.getElementById('btn-cargar-clientes').addEventListener('click', cargarClientesHabituales);
-
-async function cargarClientesHabituales() {
+// Clientes Habituales
+document.getElementById('btn-cargar-clientes').addEventListener('click', async () => {
     const tabla = document.getElementById('tabla-clientes-habituales');
-    tabla.innerHTML = '<div class="loading">Cargando...</div>';
-
+    tabla.innerHTML = '<div class="loading">Cargando</div>';
     try {
-        const response = await safeGapiCall(() =>
-            gapi.client.sheets.spreadsheets.values.get({
-                spreadsheetId: spreadsheetId, range: 'ClientesHabituales!A:E'
-            })
-        );
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'ClientesHabituales!A:E' }));
+        const rows = (r.result.values || []).slice(1);
+        if (rows.length > 0) {
+            tabla.innerHTML = `<table class="tabla-registros"><thead><tr><th>Nombre</th><th>CI</th><th>Celular</th><th>Alquileres</th><th>Último</th></tr></thead><tbody>${rows.map(r => `<tr><td>⭐ ${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td><strong>${r[3]||0}</strong></td><td>${r[4]||'-'}</td></tr>`).join('')}</tbody></table>`;
+        } else { tabla.innerHTML = '<p class="placeholder-text">No hay clientes</p>'; }
+    } catch (e) { tabla.innerHTML = '<p class="placeholder-text">Error</p>'; }
+});
 
-        const rows = response.result.values || [];
-
-        if (rows.length > 1) {
-            let html = `<table class="tabla-registros"><thead><tr>
-                <th>Nombre</th><th>CI</th><th>Celular</th><th>Alquileres</th><th>Último</th>
-            </tr></thead><tbody>`;
-
-            for (let i = 1; i < rows.length; i++) {
-                html += `<tr>
-                    <td>⭐ ${rows[i][0]}</td><td>${rows[i][1]}</td><td>${rows[i][2]}</td>
-                    <td><strong>${rows[i][3] || 0}</strong></td><td>${rows[i][4] || '-'}</td>
-                </tr>`;
-            }
-
-            html += '</tbody></table>';
-            tabla.innerHTML = html;
-        } else {
-            tabla.innerHTML = '<p class="placeholder-text">No hay clientes habituales</p>';
-        }
-
-    } catch (error) {
-        console.error('Error cargando clientes:', error);
-        tabla.innerHTML = '<p class="placeholder-text">Error de conexión</p>';
-    }
+// Stats
+async function cargarStats() {
+    try {
+        const r = await safeGapi(() => gapi.client.sheets.spreadsheets.values.get({ spreadsheetId, range: 'Alquileres!A:M' }));
+        const rows = (r.result.values || []).slice(1);
+        const hoy = new Date().toLocaleDateString('es-BO');
+        document.getElementById('stat-hoy').textContent = rows.filter(r => r[13] && r[13].includes(hoy.split('/')[2])).length;
+        document.getElementById('stat-pendientes').textContent = rows.filter(r => r[12] === 'Alquilado').length;
+        document.getElementById('stat-devueltos').textContent = rows.filter(r => r[12] === 'Devuelto').length;
+    } catch (e) { console.error('Stats:', e); }
 }
 
-// ========================================
-// INICIALIZACIÓN
-// ========================================
+// Init
 document.addEventListener('DOMContentLoaded', () => {
-    const fechaInput = document.getElementById('fecha-alquiler');
-    if (fechaInput) fechaInput.value = new Date().toISOString().split('T')[0];
-    console.log('🎭 Disfraces Fantasía - Cargando APIs de Google...');
-
-    // Registrar Service Worker si está disponible
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {
-            console.log('Service Worker no registrado (modo local)');
-        });
-    }
+    const f = document.getElementById('fecha-alquiler');
+    if (f) f.value = new Date().toISOString().split('T')[0];
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 });
