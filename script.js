@@ -73,7 +73,8 @@ function generarNumeroRecibo() {
 // ========================================
 function gapiLoaded() {
     gapi.load('client', initializeGapiClient);
-    deshabilitarBotonLogin(); // Deshabilitar al inicio
+    deshabilitarBotonLogin();
+    updateLoadingStep('step-gapi', 'active');
 }
 
 async function initializeGapiClient() {
@@ -81,9 +82,11 @@ async function initializeGapiClient() {
         await gapi.client.init({ apiKey: API_KEY, discoveryDocs: [DISCOVERY_DOC] });
         gapiInited = true;
         console.log('✅ Google API inicializada');
+        updateLoadingStep('step-gapi', 'done');
         checkReady();
     } catch (error) {
-        console.error('❌ Error inicializando GAPI:', error);
+        console.error(' Error inicializando GAPI:', error);
+        updateLoadingStep('step-gapi', 'error');
     }
 }
 
@@ -95,13 +98,21 @@ function gisLoaded() {
     });
     gisInited = true;
     console.log('✅ Google Identity Services cargado');
+    updateLoadingStep('step-gis', 'done');
     checkReady();
+}
+
+function updateLoadingStep(stepId, status) {
+    const step = document.getElementById(stepId);
+    if (!step) return;
+    step.className = 'loading-step ' + status;
 }
 
 function checkReady() {
     if (gapiInited && gisInited) {
         console.log('🎭 Sistema listo para autenticación');
         habilitarBotonLogin();
+        updateLoadingStep('step-ready', 'active');
     }
 }
 
@@ -111,13 +122,12 @@ function habilitarBotonLogin() {
     btnGoogle.disabled = false;
     btnGoogle.style.opacity = '1';
     btnGoogle.style.cursor = 'pointer';
-    // Cambiar texto si hay un indicador de carga
-    const textoBtn = btnGoogle.querySelector('.btn-google-text') || btnGoogle;
-    const parent = btnGoogle.closest('.google-login-container');
-    if (parent) {
-        const hint = parent.querySelector('.login-loading');
-        if (hint) hint.style.display = 'none';
-    }
+    
+    // Ocultar loading después de un momento
+    setTimeout(() => {
+        const loadingEl = document.getElementById('login-loading');
+        if (loadingEl) loadingEl.classList.add('loading-complete');
+    }, 1500);
 }
 
 function deshabilitarBotonLogin() {

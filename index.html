@@ -37,9 +37,43 @@
     <!-- CSS crítico inline para primer render -->
     <link rel="stylesheet" href="styles.css">
 
-    <!-- Google APIs con carga diferida -->
+    <!-- Google APIs con carga optimizada -->
     <script src="https://apis.google.com/js/api.js" async defer onload="gapiLoaded()"></script>
     <script src="https://accounts.google.com/gsi/client" async defer onload="gisLoaded()"></script>
+
+    <style>
+        /* Loading state del botón de login */
+        .login-loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .login-loading.loading-complete {
+            display: none;
+        }
+        .login-loading .loading-step {
+            display: block;
+            padding: 4px 0;
+            opacity: 0.5;
+            transition: opacity 0.3s;
+        }
+        .login-loading .loading-step.active {
+            opacity: 1;
+            font-weight: bold;
+        }
+        .login-loading .loading-step.done {
+            opacity: 1;
+            color: #27ae60;
+        }
+        #btn-google-login {
+            transition: opacity 0.3s;
+        }
+        #btn-google-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+    </style>
 </head>
 <body>
     <!-- Skip link para accesibilidad -->
@@ -251,8 +285,12 @@
                 <p>Inicia sesión con tu cuenta de Google para acceder al sistema de clientes</p>
             </div>
             <div class="google-login-container">
-                <p class="login-loading" style="text-align: center; color: #667eea; font-size: 0.9rem; margin-bottom: 1rem;">⏳ Cargando sistema de autenticación...</p>
-                <button id="btn-google-login" class="btn-google" disabled style="opacity: 0.5; cursor: not-allowed;">
+                <div class="login-loading" id="login-loading">
+                    <span class="loading-step" id="step-gapi">📡 Conectando con Google...</span>
+                    <span class="loading-step" id="step-gis">🔑 Preparando autenticación...</span>
+                    <span class="loading-step" id="step-ready">✅ Listo para iniciar sesión</span>
+                </div>
+                <button id="btn-google-login" class="btn-google" disabled>
                     <svg width="24" height="24" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
